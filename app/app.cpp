@@ -1,9 +1,8 @@
 #include<iostream>
 #include <cctype>
 #include "class.h"
-#include "json.hpp"
 using namespace std;
-nlohmann::json j;
+parsingAndSend p;
 bool valid = false;
 string trim(const string& str) {
     size_t first = str.find_first_not_of(" \t\n\r");
@@ -22,16 +21,13 @@ input = trim(input);
 for (int j=0;j<(sizeof(validcmd)/sizeof(validcmd[0]));j++){
     if(input == validcmd[j]){
         valid = true;
+        cout<<"Processing..."<<endl;
+        p.parsing(j);
         break;
-    }else{
+    }else if(j==3 && input != validcmd[j]){
         valid = false;
+        cout<<"Command not found"<<endl;
     }
-}
-if(valid == true){
-    parsingJson();
-    cout<<"Processing..."<<endl;
-}else{
-    cout<<"Invalid command"<<endl;
 }
 
 }
