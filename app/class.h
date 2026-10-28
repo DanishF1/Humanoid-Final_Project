@@ -45,20 +45,6 @@ void parsing(int number){
     string payload = '{' + payloadRaw +'}';
     cout<<payload<<endl;
     sendKebridge(payload);
-    switch(number){
-        case maju:
-        break;
-
-        case mundur:
-        break;
-
-        case belok_kanan:
-        break;
-
-        case belok_kiri:
-        break;
-
-    }
 }
 
 void sendKebridge(string data){
