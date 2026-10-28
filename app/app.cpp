@@ -3,7 +3,8 @@
 #include "class.h"
 #include "json.hpp"
 using namespace std;
-
+nlohmann::json j;
+bool valid = false;
 string trim(const string& str) {
     size_t first = str.find_first_not_of(" \t\n\r");
     if (first == string::npos) return ""; // Jika string hanya berisi karakter kosong
@@ -13,19 +14,38 @@ string trim(const string& str) {
 }
 
 void processingInput(string input){
+string validcmd[4] = {"w", "s", "a", "d"};
 for(int i=0;i<input.length();i++){
     input[i]=tolower(input[i]);
 }
 input = trim(input);
+for (int j=0;j<(sizeof(validcmd)/sizeof(validcmd[0]));j++){
+    if(input == validcmd[j]){
+        valid = true;
+        break;
+    }else{
+        valid = false;
+    }
+}
+if(valid == true){
+    parsingJson();
+    cout<<"Processing..."<<endl;
+}else{
+    cout<<"Invalid command"<<endl;
+}
 
 }
 
-
-
 int main(){
 while(true){
+valid = false;
 string input;
 cin>>input;
-if(input=="exit" ||input == "q"){exit(0);}
+
+if(input=="exit" ||input == "q"){
+    exit(0);
+}else{
+    processingInput(input);
+}
 }   
 }
