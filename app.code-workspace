@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "app"
+		},
+		{
+			"name": "ESP_Bridge",
+			"path": "ESP_Bridge"
+		}
+	],
+	"settings": {}
+}
