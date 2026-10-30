@@ -57,6 +57,14 @@ void setup() {
     Serial.println(esp_err_to_name(err));
     return;
   }
+
+  if(!LittleFS.begin(true)){
+    Serial.println("Little FS failed");
+    return;
+  }else{
+    Serial.println("LittleFS Success!");
+  }
+
   Serial.println("Siap.");
 }
 

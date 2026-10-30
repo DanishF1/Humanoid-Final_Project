@@ -1,4 +1,6 @@
 #pragma once
+#include"LittleFS.h"
+#include <Arduino.h>
 enum state{
 IDLE, 
 MAJU,
@@ -7,11 +9,23 @@ KANAN,
 KIRI,
 JOGET
 };
+File file;
+JsonDocument doc;
 state currentState = IDLE;
 class rawMotorik{
     public:
 void kakiKananMaju(){
-
+    if(LittleFS.exists("/maju.json")){
+        file = LittleFS.open("/maju.json");
+    }
+        while(file.available()){
+        deserializeJson(doc, file);
+        int total_actuators = doc["total_actuators"];
+        int total_frames = doc["total_frames"];
+        int total_times = doc["total_times"];
+        int times[total_times] = {doc["times"]};
+        int frames[total_actuators][total_frames] = {doc["frames"]}; 
+        }
 }
 
 void kakiKiriMaju(){
@@ -41,12 +55,15 @@ void maju(int timex){
     if(currentState != IDLE) return;
     currentState = MAJU;
     Serial.println("MAJU");
+
+
 for(int i =0;i<timex;i++){
     if(i==0 || i%2 == 0){
         rm.kakiKananMaju();
     }else{
         rm.kakiKiriMaju();
     }
+    
 }
     currentState = IDLE;
 }
