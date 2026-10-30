@@ -36,18 +36,11 @@ class motorik{
         return true;
     }
 
-    motorik(){
-        bool buffer;
-        EEPROM.get(0, buffer);
-        if(!buffer){
-            Serial.println("Something is wrong...");
-            return;
-        }
-        EEPROM.write(0, false);
-    }
+    motorik(){}
 void maju(int timex){
-    if(!isIdle) return;
+    if(currentState != IDLE) return;
     currentState = MAJU;
+    Serial.println("MAJU");
 for(int i =0;i<timex;i++){
     if(i==0 || i%2 == 0){
         rm.kakiKananMaju();
@@ -59,6 +52,8 @@ for(int i =0;i<timex;i++){
 }
 
 void mundur(int timex){
+    if(currentState != IDLE) return;
+    currentState = MUNDUR;
 for(int i =0;i<timex;i++){
     if(i==0 || i%2 == 0){
         rm.kakiKiriMundur();
@@ -66,18 +61,23 @@ for(int i =0;i<timex;i++){
         rm.kakiKananMundur();
     }
 }
+    currentState = IDLE;
 }
 void belokKanan(int timex){
+    if(currentState != IDLE) return;
+    currentState = KANAN;
 
+    currentState = IDLE;
 }
 
 void belokKiri(int timex){
+    if(currentState != IDLE) return;
+    currentState = MAJU;
 
-
+    currentState = IDLE;
 }
 
 ~motorik(){
-    EEPROM.write(0, true);
 }
 };
 

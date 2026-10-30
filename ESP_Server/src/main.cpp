@@ -6,8 +6,7 @@
 #include <ArduinoJson.h>
 #include <esp_now.h>
 #include <esp_wifi.h>
-#include "SPIFFS.h"
-
+#include "LittleFS.h"
 #include "class.h"
 #include "espnow.h"
 
@@ -16,6 +15,7 @@
 
 void setup() {
  Serial.begin(115200);
+ 
   Serial.println("Transmitter Init...");
   pinMode(LED_BUILTIN, OUTPUT);
 
