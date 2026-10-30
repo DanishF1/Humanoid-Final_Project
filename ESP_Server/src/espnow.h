@@ -4,6 +4,7 @@
 //ESPNOW
 #define led 2
 #include <ArduinoJson.h>
+#include "motorik.h"
 int nomorAntrean = 0;
 int address = 0;        
 int addressTime = 1;    
@@ -27,6 +28,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   sendToBridge s;
+  motorik m;
   payloadEN = dataTerima.pesan;
   Serial.println("DATA DITERIMA");
   Serial.println(dataTerima.pesan);
@@ -36,11 +38,42 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   String pesan = dataTerima.pesan;
   if(pesan.length() < 2) return;    
   String header = pesan.substring(0, 2);
+  String leng;
+  int lengInt;
   
   if(header == "FF"){
   Serial.println("INPUT VALID");
+  if(pesan.length() == 5){
+    //FFw01
+    char cmd;
+    leng = pesan.substring(3,5);
+    lengInt = leng.toInt();
+    cmd = pesan[2];
+    switch(cmd){
+      case 'w':
+      m.maju(lengInt);
+      break;
+      case 's':
+      m.mundur(lengInt);
+      break;
+      case 'd':
+      m.belokKanan(lengInt);
+      break;
+      case 'a':
+      m.belokKiri(lengInt);
+      break;
+      default:
+       break;
+    }
+  }else if(pesan.length() == 6){
+    //buat kalo joget
+    String cmd;
+    leng = pesan.substring(4,6);
+    lengInt = leng.toInt();
+    cmd = pesan.substring(2,4);
+  }
 
-}
+  }
 }
 
 #endif
