@@ -15,8 +15,8 @@ state currentState = IDLE;
 class rawMotorik{
     public:
 void kakiKananMaju(){
-    if(LittleFS.exists("/maju.json")){
-        file = LittleFS.open("/maju.json");
+    if(LittleFS.exists("data/maju.json")){
+        file = LittleFS.open("data/maju.json");
     }
         while(file.available()){
         deserializeJson(doc, file);
