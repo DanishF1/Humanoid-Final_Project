@@ -27,14 +27,15 @@ class appGUI(QWidget):
         
     def appInit(self):
         self.setWindowTitle("appGUI")
-        self.setGeometry(600, 600, 400, 400)
+        self.setGeometry(600, 600, 400, 600)
         self.master = QVBoxLayout()
+        self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         
         self.text = QLabel("Tekan Tombol untuk Menggerakkan Robot")
         self.text.setFixedHeight(25)
         self.text.setFixedWidth(500)
         self.text.setAlignment(Qt.AlignCenter)
-        self.text.setDisabled(True)
+        self.text.setDisabled(False)
         
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
@@ -48,19 +49,39 @@ class appGUI(QWidget):
         self.kiri = QPushButton("Belok Kiri")
         self.kiri.clicked.connect(self.sendSerialKiri)
         
+        self.commandt = QLabel("Command Kustom")
+        self.command = QLineEdit()
+        self.btnCommand = QPushButton("Kirim Command Kustom")
+        self.btnCommand.clicked.connect(self.sendCommandKustom)
+        self.commandt.setFixedHeight(25)
+        self.commandt.setFixedWidth(500)
+        self.commandt.setAlignment(Qt.AlignCenter)
+        
+        self.dialogt = QLabel("Serial Monitor ESP32")
         self.dialogText = QTextEdit("Dialog dari ESP32 akan muncul di sini...")
         self.dialogText.setReadOnly(True)
+        self.command.returnPressed.connect(self.clear)
+        self.dialogt.setFixedHeight(25)
+        self.dialogt.setFixedWidth(500)
+        self.dialogt.setAlignment(Qt.AlignCenter)
+        
         
         self.master.addWidget(self.text)
         self.master.addWidget(self.maju)
         self.master.addWidget(self.mundur)
         self.master.addWidget(self.kanan)
         self.master.addWidget(self.kiri)
+        self.master.addWidget(self.commandt)
+        self.master.addWidget(self.command)
+        self.master.addWidget(self.btnCommand)
+        self.master.addWidget(self.dialogt)
         self.master.addWidget(self.dialogText)
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
         
+    def clear(self):
+        self.command.clearFocus()
         
     def initSerial(self):
         """Logika untuk membuka port serial berdasarkan usb dan baudrate"""
@@ -70,6 +91,10 @@ class appGUI(QWidget):
         except serial.SerialException as e:
             print(f"Gagal terhubung ke Serial {usb}: {e}")
             self.ser = None
+    
+    def sendCommandKustom(self):
+        payload = self.command.text().strip()
+        self.serialComs(payload)
             
     def sendSerialMaju(self):
         self.serialComs("FFw01")
