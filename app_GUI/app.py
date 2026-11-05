@@ -13,12 +13,13 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QLabel,
     )
-from PyQt5.QtGui import QFont
-import asyncio
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
+import sys
 
 baudrate = 115200
-usb = "/dev/ttyUSB1"
+usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"]
+asset = "assets/btk.jpeg"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -31,6 +32,7 @@ class appGUI(QWidget):
         self.master = QVBoxLayout()
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         
+        self.setWindowIcon(QIcon(asset))
         self.text = QLabel("Tekan Tombol untuk Menggerakkan Robot")
         self.text.setFixedHeight(25)
         self.text.setFixedWidth(500)
@@ -57,7 +59,7 @@ class appGUI(QWidget):
         self.commandt.setFixedWidth(500)
         self.commandt.setAlignment(Qt.AlignCenter)
         
-        self.dialogt = QLabel("Serial Monitor ESP32")
+        self.dialogt = QLabel("Dialog Error Aplikasi")
         self.dialogText = QTextEdit("Dialog dari ESP32 akan muncul di sini...")
         self.dialogText.setReadOnly(True)
         self.command.returnPressed.connect(self.clears)
@@ -88,15 +90,19 @@ class appGUI(QWidget):
         self.command.clear()
         
     def initSerial(self):
-        """Logika untuk membuka port serial berdasarkan usb dan baudrate"""
-        try:
-            self.ser = serial.Serial(usb, baudrate, timeout=1)
-            print(f"Koneksi Serial berhasil terhubung ke {usb} dengan baudrate {baudrate}")
-            self.dialogText.setText(f"Koneksi Serial berhasil terhubung ke {usb} dengan baudrate {baudrate}")
-        except serial.SerialException as e:
-            print(f"Gagal terhubung ke Serial {usb}: {e}")
-            self.dialogText.setText(f"Gagal terhubung ke Serial {usb}: {e}")
-            self.ser = None
+        """Logika untuk membuka semua port serial di daftar usbs"""
+        self.sers = []
+        laporan = []
+        for usb in usbs:
+            try:
+                ser = serial.Serial(usb, baudrate, timeout=1)
+                self.sers.append(ser)
+                pesan = f"Koneksi Serial berhasil terhubung ke {usb} dengan baudrate {baudrate}"
+            except serial.SerialException as e:
+                pesan = f"Gagal terhubung ke Serial {usb}: {e}"
+            print(pesan)
+            laporan.append(pesan)
+        self.dialogText.setText("\n".join(laporan))
     
     def sendCommandKustom(self):
         payload = self.command.text().strip()
@@ -130,34 +136,39 @@ class appGUI(QWidget):
         self.serialComs("FFa01")
             
     def serialComs(self, command):
-        if self.ser and self.ser.is_open:
-            try:
-                self.ser.write((command + "\n").encode('utf-8'))
-                print(f"Serial Sent: {command}")
-            except serial.SerialException as e:
-                print(f"Error saat mengirim data serial: {e}")
-                self.dialogText.setText(f"Error saat mengirim data serial: {e}")
-        else:
-            print(f"[Offline] Port Serial {usb} tidak aktif. Perintah '{command}' gagal terkirim.")
-            self.dialogText.setText(f"[Offline] Port Serial {usb} tidak aktif. Perintah '{command}' gagal terkirim.")
+        terkirim = 0
+        for ser in self.sers:
+            if ser.is_open:
+                try:
+                    ser.write((command + "\n").encode('utf-8'))
+                    print(f"Serial Sent ke {ser.port}: {command}")
+                    terkirim += 1
+                except serial.SerialException as e:
+                    print(f"Error saat mengirim data serial ke {ser.port}: {e}")
+                    self.dialogText.setText(f"Error saat mengirim data serial ke {ser.port}: {e}")
+        if terkirim == 0:
+            print(f"[Offline] Tidak ada port serial aktif. Perintah '{command}' gagal terkirim.")
+            self.dialogText.setText(f"[Offline] Tidak ada port serial aktif. Perintah '{command}' gagal terkirim.")
         self.clears()
         
     def bacaSerial(self):
-        """Membaca 1 line dari ESP32 dan menampilkannya di dialogText"""
-        if self.ser and self.ser.is_open:
-            try:
-                if self.ser.in_waiting > 0:
-                    line = self.ser.readline().decode('utf-8', errors='ignore').strip()
-                    if line:
-                        print(f"Serial Received: {line}")
-                        self.dialogText.setText(line)
-            except serial.SerialException as e:
-                print(f"Error saat membaca data serial: {e}")
-                self.dialogText.setText(f"Error saat membaca data serial: {e}")
+        """Membaca 1 line dari tiap ESP32 dan menampilkannya di dialogText"""
+        for ser in self.sers:
+            if ser.is_open:
+                try:
+                    if ser.in_waiting > 0:
+                        line = ser.readline().decode('utf-8', errors='ignore').strip()
+                        if line:
+                            print(f"Serial Received dari {ser.port}: {line}")
+                            self.dialogText.setText(f"[{ser.port}] {line}")
+                except serial.SerialException as e:
+                    print(f"Error saat membaca data serial dari {ser.port}: {e}")
+                    self.dialogText.setText(f"Error saat membaca data serial dari {ser.port}: {e}")
         
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(asset))
     window = appGUI()
     window.show()
     sys.exit(app.exec_())

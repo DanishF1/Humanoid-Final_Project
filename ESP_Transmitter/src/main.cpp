@@ -7,6 +7,7 @@
 #include <esp_wifi.h>
 #include "espnow.h"
 #define CHANNEL 6
+String inputSerial;
 
 void setup() {
   Serial.begin(115200);
@@ -55,7 +56,7 @@ void setup() {
 }
 
 void loop() {
-    String inputSerial = Serial.readStringUntil('\n');
+    inputSerial = Serial.readStringUntil('\n');
     inputSerial.trim();
     if(inputSerial.length() == 0) return;
     if(inputSerial.substring(0,2) == "FF"){
