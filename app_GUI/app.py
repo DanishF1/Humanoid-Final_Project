@@ -18,7 +18,7 @@ import asyncio
 from PyQt5.QtCore import Qt
 
 baudrate = 115200
-usb = "/dev/ttyUSB0"
+usb = "/dev/ttyUSB1"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -60,7 +60,7 @@ class appGUI(QWidget):
         self.dialogt = QLabel("Serial Monitor ESP32")
         self.dialogText = QTextEdit("Dialog dari ESP32 akan muncul di sini...")
         self.dialogText.setReadOnly(True)
-        self.command.returnPressed.connect(self.clear)
+        self.command.returnPressed.connect(self.clears)
         self.dialogt.setFixedHeight(25)
         self.dialogt.setFixedWidth(500)
         self.dialogt.setAlignment(Qt.AlignCenter)
@@ -80,8 +80,13 @@ class appGUI(QWidget):
         self.master.addStretch()
         self.setLayout(self.master)
         
-    def clear(self):
-        self.command.clearFocus()
+    def clears(self):
+        self.maju.clearFocus()
+        self.mundur.clearFocus()
+        self.kanan.clearFocus()
+        self.kiri.clearFocus()
+        self.btnCommand.clearFocus()
+        self.command.clear()
         
     def initSerial(self):
         """Logika untuk membuka port serial berdasarkan usb dan baudrate"""
@@ -94,6 +99,17 @@ class appGUI(QWidget):
     
     def sendCommandKustom(self):
         payload = self.command.text().strip()
+        if payload[0:2] != "FF":
+            self.clears()
+            self.dialogText.setText("Error, header's command is invalid!")
+            return
+        elif len(payload)<5:
+            self.clears()
+            self.dialogText.setText("Error, command's length is unrational'!")
+            return
+        else:
+            self.clears()
+        
         self.serialComs(payload)
             
     def sendSerialMaju(self):
@@ -120,6 +136,7 @@ class appGUI(QWidget):
         else:
             print(f"[Offline] Port Serial {usb} tidak aktif. Perintah '{command}' gagal terkirim.")
             self.dialogText.setText(f"[Offline] Port Serial {usb} tidak aktif. Perintah '{command}' gagal terkirim.")
+        self.clears()
         
 
 if __name__ == '__main__':

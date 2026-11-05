@@ -12,13 +12,18 @@
 
 #define EEPROM_SIZE 512
 #define CHANNEL 6
+#define buzzer 14
 
 void setup() {
  Serial.begin(115200);
  
   Serial.println("Transmitter Init...");
   pinMode(LED_BUILTIN, OUTPUT);
-
+  pinMode(buzzer, OUTPUT);
+  digitalWrite(buzzer, HIGH);
+  delay(2000);
+  Serial.println("Buzzer Menyala");
+  digitalWrite(buzzer, LOW);
   digitalWrite(LED_BUILTIN, LOW);
   esp_wifi_set_ps(WIFI_PS_NONE);
 
