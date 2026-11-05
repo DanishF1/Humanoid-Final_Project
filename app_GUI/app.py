@@ -19,7 +19,7 @@ import sys
 
 baudrate = 115200
 usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"]
-asset = "assets/btk.jpeg"
+asset = "/assets/btk.jpeg"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -67,6 +67,9 @@ class appGUI(QWidget):
         self.dialogt.setFixedWidth(500)
         self.dialogt.setAlignment(Qt.AlignCenter)
         
+        self.reset = QPushButton("Restart Aplikasi")
+        self.reset.clicked.connect(self.restart)
+        
         self.master.addWidget(self.text)
         self.master.addWidget(self.maju)
         self.master.addWidget(self.mundur)
@@ -77,9 +80,15 @@ class appGUI(QWidget):
         self.master.addWidget(self.btnCommand)
         self.master.addWidget(self.dialogt)
         self.master.addWidget(self.dialogText)
+        self.master.addWidget(self.reset)
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
+        
+        
+    def restart(self):
+        self.clears()
+        self.initSerial()
         
     def clears(self):
         self.maju.clearFocus()
