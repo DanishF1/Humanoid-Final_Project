@@ -65,7 +65,6 @@ class appGUI(QWidget):
         self.dialogt.setFixedWidth(500)
         self.dialogt.setAlignment(Qt.AlignCenter)
         
-        
         self.master.addWidget(self.text)
         self.master.addWidget(self.maju)
         self.master.addWidget(self.mundur)
@@ -93,13 +92,19 @@ class appGUI(QWidget):
         try:
             self.ser = serial.Serial(usb, baudrate, timeout=1)
             print(f"Koneksi Serial berhasil terhubung ke {usb} dengan baudrate {baudrate}")
+            self.dialogText.setText(f"Koneksi Serial berhasil terhubung ke {usb} dengan baudrate {baudrate}")
         except serial.SerialException as e:
             print(f"Gagal terhubung ke Serial {usb}: {e}")
+            self.dialogText.setText(f"Gagal terhubung ke Serial {usb}: {e}")
             self.ser = None
     
     def sendCommandKustom(self):
         payload = self.command.text().strip()
-        if payload[0:2] != "FF":
+        if payload == "":
+            self.clears()
+            self.dialogText.setText("Error, command cant be empty!")
+            return
+        elif payload[0:2] != "FF":
             self.clears()
             self.dialogText.setText("Error, header's command is invalid!")
             return
@@ -127,7 +132,6 @@ class appGUI(QWidget):
     def serialComs(self, command):
         if self.ser and self.ser.is_open:
             try:
-                # String dikonversi ke byte stream dengan newline (\n)
                 self.ser.write((command + "\n").encode('utf-8'))
                 print(f"Serial Sent: {command}")
             except serial.SerialException as e:
@@ -137,6 +141,19 @@ class appGUI(QWidget):
             print(f"[Offline] Port Serial {usb} tidak aktif. Perintah '{command}' gagal terkirim.")
             self.dialogText.setText(f"[Offline] Port Serial {usb} tidak aktif. Perintah '{command}' gagal terkirim.")
         self.clears()
+        
+    def bacaSerial(self):
+        """Membaca 1 line dari ESP32 dan menampilkannya di dialogText"""
+        if self.ser and self.ser.is_open:
+            try:
+                if self.ser.in_waiting > 0:
+                    line = self.ser.readline().decode('utf-8', errors='ignore').strip()
+                    if line:
+                        print(f"Serial Received: {line}")
+                        self.dialogText.setText(line)
+            except serial.SerialException as e:
+                print(f"Error saat membaca data serial: {e}")
+                self.dialogText.setText(f"Error saat membaca data serial: {e}")
         
 
 if __name__ == '__main__':
