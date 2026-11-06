@@ -10,32 +10,54 @@
 #include "class.h"
 #include "espnow.h"
 
-#define EEPROM_SIZE 512
-#define CHANNEL 6
-#define buzzer 14
+const int EEPROM_SIZE = 512;
+const int CHANNEL = 6;
+const int buzzer = 14;
 
 //servo-servo
 //SERVO KAKI KIRI
-#define KAKI_KIRI_YAW 34
-#define KAKI_KIRI_PITCH 35
-#define LUTUT_KIRI 33
-#define TELAPAK_KIRI 25
+const int KAKI_KIRI_YAW = 34;
+const int KAKI_KIRI_PITCH = 35;
+const int LUTUT_KIRI = 33;
+const int TELAPAK_KIRI = 25;
 
 //SERVO KAKI KANAN
-#define KAKI_KANAN_YAW 27
-#define KAKI_KANAN_PITCH 14
-#define LUTUT_KANAN 12
-#define TELAPAK_KANAN 13
+const int KAKI_KANAN_YAW = 27;
+const int KAKI_KANAN_PITCH = 14;
+const int LUTUT_KANAN = 12;
+const int TELAPAK_KANAN = 13;
 
 //SERVO TANGAN KIRI
-#define TANGAN_KIRI_PITCH 23
-#define TANGAN_KIRI_ROLL 22
-#define SIKU_KIRI 21
+const int TANGAN_KIRI_PITCH = 23;
+const int TANGAN_KIRI_ROLL = 22;
+const int SIKU_KIRI = 21;
 
 //SERVO TANGAN KANAN
-#define TANGAN_KANAN_PITCH 19
-#define TANGAN_KANAN_ROLL 18
-#define SIKU_KANAN 17
+const int TANGAN_KANAN_PITCH = 19;
+const int TANGAN_KANAN_ROLL = 18;
+const int SIKU_KANAN = 17;
+
+// Kaki Kiri
+Servo servoKakiKiriYaw;
+Servo servoKakiKiriPitch;
+Servo servoLututKiri;
+Servo servoTelapakKiri;
+
+// Kaki Kanan
+Servo servoKakiKananYaw;
+Servo servoKakiKananPitch;
+Servo servoLututKanan;
+Servo servoTelapakKanan;
+
+// Tangan Kiri
+Servo servoTanganKiriPitch;
+Servo servoTanganKiriRoll;
+Servo servoSikuKiri;
+
+// Tangan Kanan
+Servo servoTanganKananPitch;
+Servo servoTanganKananRoll;
+Servo servoSikuKanan;
 
 void setup() {
  Serial.begin(115200);
@@ -92,6 +114,71 @@ void setup() {
   }else{
     Serial.println("LittleFS Success!");
   }
+
+  ESP32PWM::allocateTimer(0);
+  ESP32PWM::allocateTimer(1);
+  ESP32PWM::allocateTimer(2);
+  ESP32PWM::allocateTimer(3);
+
+  // Set Frekuensi standar servo (50Hz)
+  servoKakiKiriYaw.setPeriodHertz(50);
+  servoKakiKiriPitch.setPeriodHertz(50);
+  servoLututKiri.setPeriodHertz(50);
+  servoTelapakKiri.setPeriodHertz(50);
+
+  servoKakiKananYaw.setPeriodHertz(50);
+  servoKakiKananPitch.setPeriodHertz(50);
+  servoLututKanan.setPeriodHertz(50);
+  servoTelapakKanan.setPeriodHertz(50);
+
+  servoTanganKiriPitch.setPeriodHertz(50);
+  servoTanganKiriRoll.setPeriodHertz(50);
+  servoSikuKiri.setPeriodHertz(50);
+
+  servoTanganKananPitch.setPeriodHertz(50);
+  servoTanganKananRoll.setPeriodHertz(50);
+  servoSikuKanan.setPeriodHertz(50);
+
+  // 4. ATTACH SERVO KE PIN PROSES (Pulse width standar: 500us - 2400us)
+  // Kaki Kiri
+  servoKakiKiriYaw.attach(KAKI_KIRI_YAW, 500, 2400);
+  servoKakiKiriPitch.attach(KAKI_KIRI_PITCH, 500, 2400);
+  servoLututKiri.attach(LUTUT_KIRI, 500, 2400);
+  servoTelapakKiri.attach(TELAPAK_KIRI, 500, 2400);
+
+  // Kaki Kanan
+  servoKakiKananYaw.attach(KAKI_KANAN_YAW, 500, 2400);
+  servoKakiKananPitch.attach(KAKI_KANAN_PITCH, 500, 2400);
+  servoLututKanan.attach(LUTUT_KANAN, 500, 2400);
+  servoTelapakKanan.attach(TELAPAK_KANAN, 500, 2400);
+
+  // Tangan Kiri
+  servoTanganKiriPitch.attach(TANGAN_KIRI_PITCH, 500, 2400);
+  servoTanganKiriRoll.attach(TANGAN_KIRI_ROLL, 500, 2400);
+  servoSikuKiri.attach(SIKU_KIRI, 500, 2400);
+
+  // Tangan Kanan
+  servoTanganKananPitch.attach(TANGAN_KANAN_PITCH, 500, 2400);
+  servoTanganKananRoll.attach(TANGAN_KANAN_ROLL, 500, 2400);
+  servoSikuKanan.attach(SIKU_KANAN, 500, 2400);
+
+  servoKakiKiriYaw.write(45);
+  servoKakiKiriPitch.write(45);
+  servoLututKiri.write(45);
+  servoTelapakKiri.write(45);
+
+  servoKakiKananYaw.write(45);
+  servoKakiKananPitch.write(45);
+  servoLututKanan.write(45);
+  servoTelapakKanan.write(45);
+
+  servoTanganKiriPitch.write(45);
+  servoTanganKiriRoll.write(45);
+  servoSikuKiri.write(45);
+
+  servoTanganKananPitch.write(45);
+  servoTanganKananRoll.write(45);
+  servoSikuKanan.write(45);
 
   Serial.println("Siap.");
   digitalWrite(buzzer,LOW);

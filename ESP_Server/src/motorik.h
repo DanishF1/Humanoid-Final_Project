@@ -1,6 +1,25 @@
 #pragma once
 #include"LittleFS.h"
 #include <Arduino.h>
+#include <ESP32Servo.h>
+
+extern const int KAKI_KIRI_YAW;
+extern const int KAKI_KIRI_PITCH;
+extern const int LUTUT_KIRI;
+extern const int TELAPAK_KIRI;
+
+extern const int KAKI_KANAN_YAW;
+extern const int KAKI_KANAN_PITCH;
+extern const int LUTUT_KANAN;
+extern const int TELAPAK_KANAN;
+
+extern const int TANGAN_KIRI_PITCH;
+extern const int TANGAN_KIRI_ROLL;
+extern const int SIKU_KIRI;
+
+extern const int TANGAN_KANAN_PITCH;
+extern const int TANGAN_KANAN_ROLL;
+extern const int SIKU_KANAN;
 enum state{
 IDLE, 
 MAJU,
@@ -18,6 +37,7 @@ void kakiKananMaju(){
     if(LittleFS.exists("data/maju.json")){
         file = LittleFS.open("data/maju.json");
     }
+    int timeNow = millis();
         while(file.available()){
         deserializeJson(doc, file);
         int total_frames = doc["total_frames"];
@@ -27,7 +47,7 @@ void kakiKananMaju(){
         int rows = sizeof(frames)/sizeof(frames[0]);
         int cols = sizeof(frames[0])/sizeof(frames[0][0]);
         for (int i=0; i<cols;i++){
-            
+
 
             for (int j=0;j<rows;j++){
 
