@@ -14,16 +14,39 @@
 #define CHANNEL 6
 #define buzzer 14
 
+//servo-servo
+//SERVO KAKI KIRI
+#define KAKI_KIRI_YAW 34
+#define KAKI_KIRI_PITCH 35
+#define LUTUT_KIRI 33
+#define TELAPAK_KIRI 25
+
+//SERVO KAKI KANAN
+#define KAKI_KANAN_YAW 27
+#define KAKI_KANAN_PITCH 14
+#define LUTUT_KANAN 12
+#define TELAPAK_KANAN 13
+
+//SERVO TANGAN KIRI
+#define TANGAN_KIRI_PITCH 23
+#define TANGAN_KIRI_ROLL 22
+#define SIKU_KIRI 21
+
+//SERVO TANGAN KANAN
+#define TANGAN_KANAN_PITCH 19
+#define TANGAN_KANAN_ROLL 18
+#define SIKU_KANAN 17
+
 void setup() {
  Serial.begin(115200);
  
   Serial.println("Transmitter Init...");
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(buzzer, OUTPUT);
-  digitalWrite(buzzer, HIGH);
+  digitalWrite(buzzer, LOW);
   delay(2000);
   Serial.println("Buzzer Menyala");
-  digitalWrite(buzzer, LOW);
+  digitalWrite(buzzer, HIGH);
   digitalWrite(LED_BUILTIN, LOW);
   esp_wifi_set_ps(WIFI_PS_NONE);
 
@@ -71,6 +94,7 @@ void setup() {
   }
 
   Serial.println("Siap.");
+  digitalWrite(buzzer,LOW);
 }
 
 void loop() {

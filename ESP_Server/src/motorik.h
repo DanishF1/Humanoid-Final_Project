@@ -20,12 +20,22 @@ void kakiKananMaju(){
     }
         while(file.available()){
         deserializeJson(doc, file);
-        int total_actuators = doc["total_actuators"];
         int total_frames = doc["total_frames"];
         int total_times = doc["total_times"];
         int times[total_times] = {doc["times"]};
-        int frames[total_actuators][total_frames] = {doc["frames"]}; 
+        int frames[total_frames][14] = {doc["frames"]}; 
+        int rows = sizeof(frames)/sizeof(frames[0]);
+        int cols = sizeof(frames[0])/sizeof(frames[0][0]);
+        for (int i=0; i<cols;i++){
+            
+
+            for (int j=0;j<rows;j++){
+
+            }
         }
+        }
+
+        
 }
 
 void kakiKiriMaju(){
