@@ -76,6 +76,7 @@ class appGUI(QWidget):
         self.master1.addWidget(self.reset)
         self.master1.addWidget(self.devop)
         self.master1.setSpacing(10)
+        self.berapaKali.setEnabled(True)
         self.master1.addStretch()
         self.setLayout(self.master1)
     
@@ -145,6 +146,7 @@ class appGUI(QWidget):
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
+        self.berapaKali.setEnabled(True)
         self.lockButtons()
         self.show()
         
@@ -238,9 +240,15 @@ class appGUI(QWidget):
     def sendSerialMaju(self):
         self.lockButtons()
         msg = self.berapaKali.text()
-        msgI = int(msg)
+        try:
+            msgI = int(msg)
+        except:
+            self.serialComs("FFw01")
+            return
         if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFw" + msg
+        elif 0 < msgI < 100 and len(msg) == 1:
+            payload = "FFw0" + msg
         else:
             payload = "FFw01"
 
@@ -250,9 +258,15 @@ class appGUI(QWidget):
     def sendSerialMundur(self):
         self.lockButtons()
         msg = self.berapaKali.text()
-        msgI = int(msg)
+        try:
+            msgI = int(msg)
+        except:
+            self.serialComs("FFw01")
+            return
         if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFs" + msg
+        elif 0 < msgI < 100 and len(msg) == 1:
+            payload = "FFs0" + msg
         else:
             payload = "FFs01"
 
@@ -262,7 +276,11 @@ class appGUI(QWidget):
     def sendSerialKanan(self):
         self.lockButtons()
         msg = self.berapaKali.text()
-        msgI = int(msg)
+        try:
+            msgI = int(msg)
+        except:
+            self.serialComs("FFw01")
+            return
         if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFd" + msg
         elif 0 < msgI < 100 and len(msg) == 1:
@@ -276,9 +294,15 @@ class appGUI(QWidget):
     def sendSerialKiri(self):
         self.lockButtons()
         msg = self.berapaKali.text()
-        msgI = int(msg)
-        if 0 < msgI < 100:
+        try:
+            msgI = int(msg)
+        except:
+            self.serialComs("FFw01")
+            return
+        if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFa" + msg
+        elif 0 < msgI < 100 and len(msg) == 1:
+            payload = "FFa0" + msg
         else:
             payload = "FFa01"
 
