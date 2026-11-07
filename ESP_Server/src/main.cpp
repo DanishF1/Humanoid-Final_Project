@@ -16,8 +16,8 @@ const int buzzer = 14;
 
 //servo-servo
 //SERVO KAKI KIRI
-const int KAKI_KIRI_YAW = 34;
-const int KAKI_KIRI_PITCH = 35;
+const int KAKI_KIRI_YAW = 32;
+const int KAKI_KIRI_PITCH = 26;
 const int LUTUT_KIRI = 33;
 const int TELAPAK_KIRI = 25;
 

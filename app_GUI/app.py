@@ -12,20 +12,66 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QLineEdit,
     QLabel,
+    
     )
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon,QPalette,QPixmap,QBrush
 from PyQt5.QtCore import Qt
 import sys
 
 baudrate = 115200
-usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"]
-asset = "/assets/btk.jpeg"
+usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyUSB4", "/dev/ttyUSB5"]
+asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.jpeg"
+setting = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/settings.png"
+retry = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/retry.png"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.appInit()
-        self.initSerial()
+        self.appInitUser()
+        self.initSerialUser()
+    
+    def appInitUser(self):
+        self.setWindowTitle("appGUI")
+        self.setGeometry(600, 600, 400, 400)
+        self.master = QVBoxLayout()
         
+        self.setWindowIcon(QIcon(asset))
+        self.text = QLabel("Tekan Tombol untuk Menggerakkan Robot")
+        self.text.setFixedHeight(25)
+        self.text.setFixedWidth(500)
+        self.text.setAlignment(Qt.AlignCenter)
+        self.text.setDisabled(False)
+        
+        self.maju = QPushButton("Maju")
+        self.maju.clicked.connect(self.sendSerialMaju)
+        
+        self.mundur = QPushButton("Mundur")
+        self.mundur.clicked.connect(self.sendSerialMundur)
+        
+        self.kanan = QPushButton("Belok Kanan")
+        self.kanan.clicked.connect(self.sendSerialKanan)
+        
+        self.kiri = QPushButton("Belok Kiri")
+        self.kiri.clicked.connect(self.sendSerialKiri)
+        
+        self.reset = QPushButton()
+        self.reset.setIcon(QIcon(retry))
+        self.reset.clicked.connect(self.restart)
+        
+        self.devop = QPushButton()
+        self.devop.setIcon(QIcon(setting))
+
+        
+        self.master.addWidget(self.text)
+        self.master.addWidget(self.maju)
+        self.master.addWidget(self.mundur)
+        self.master.addWidget(self.kanan)
+        self.master.addWidget(self.kiri)
+        self.master.addWidget(self.reset)
+        self.master.addWidget(self.devop)
+        self.master.setSpacing(10)
+        self.master.addStretch()
+        self.setLayout(self.master)
+    
     def appInit(self):
         self.setWindowTitle("appGUI")
         self.setGeometry(600, 600, 400, 600)
@@ -97,6 +143,20 @@ class appGUI(QWidget):
         self.kiri.clearFocus()
         self.btnCommand.clearFocus()
         self.command.clear()
+    
+    def initSerialUser(self):
+         """Logika untuk membuka semua port serial di daftar usbs"""
+         self.sers = []
+         laporan = []
+         for usb in usbs:
+            try:
+                ser = serial.Serial(usb, baudrate, timeout=1)
+                self.sers.append(ser)
+                pesan = f"Koneksi Serial berhasil terhubung ke {usb} dengan baudrate {baudrate}"
+            except serial.SerialException as e:
+                pesan = f"Gagal terhubung ke Serial {usb}: {e}"
+            print(pesan)
+            laporan.append(pesan)
         
     def initSerial(self):
         """Logika untuk membuka semua port serial di daftar usbs"""
