@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
     
     )
 from PyQt5.QtGui import QFont, QIcon,QPalette,QPixmap,QBrush
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 import sys
 
 baudrate = 115200
@@ -32,7 +32,9 @@ class appGUI(QWidget):
     def appInitUser(self):
         self.setWindowTitle("appGUI")
         self.setGeometry(600, 600, 400, 400)
-        self.master = QVBoxLayout()
+        self.master1 = QVBoxLayout()
+        
+        self.dialogText = QTextEdit()
         
         self.setWindowIcon(QIcon(asset))
         self.text = QLabel("Tekan Tombol untuk Menggerakkan Robot")
@@ -59,20 +61,26 @@ class appGUI(QWidget):
         
         self.devop = QPushButton()
         self.devop.setIcon(QIcon(setting))
+        self.devop.clicked.connect(self.developerOptions)
 
+        self.berapaKali = QLineEdit()
+        self.berapaKali.setPlaceholderText("Berapa Kali Robot Bergerak")
+        self.berapaKali.setAlignment(Qt.AlignCenter)
         
-        self.master.addWidget(self.text)
-        self.master.addWidget(self.maju)
-        self.master.addWidget(self.mundur)
-        self.master.addWidget(self.kanan)
-        self.master.addWidget(self.kiri)
-        self.master.addWidget(self.reset)
-        self.master.addWidget(self.devop)
-        self.master.setSpacing(10)
-        self.master.addStretch()
-        self.setLayout(self.master)
+        self.master1.addWidget(self.text)
+        self.master1.addWidget(self.berapaKali)
+        self.master1.addWidget(self.maju)
+        self.master1.addWidget(self.mundur)
+        self.master1.addWidget(self.kanan)
+        self.master1.addWidget(self.kiri)
+        self.master1.addWidget(self.reset)
+        self.master1.addWidget(self.devop)
+        self.master1.setSpacing(10)
+        self.master1.addStretch()
+        self.setLayout(self.master1)
     
     def appInit(self):
+        QWidget().setLayout(self.layout())
         self.setWindowTitle("appGUI")
         self.setGeometry(600, 600, 400, 600)
         self.master = QVBoxLayout()
@@ -84,6 +92,10 @@ class appGUI(QWidget):
         self.text.setFixedWidth(500)
         self.text.setAlignment(Qt.AlignCenter)
         self.text.setDisabled(False)
+        
+        self.berapaKali = QLineEdit()
+        self.berapaKali.setPlaceholderText("Berapa Kali Robot Bergerak")
+        self.berapaKali.setAlignment(Qt.AlignCenter)
         
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
@@ -114,9 +126,12 @@ class appGUI(QWidget):
         self.dialogt.setAlignment(Qt.AlignCenter)
         
         self.reset = QPushButton("Restart Aplikasi")
+        self.reset.setIcon(QIcon(retry))
         self.reset.clicked.connect(self.restart)
         
+        
         self.master.addWidget(self.text)
+        self.master.addWidget(self.berapaKali)
         self.master.addWidget(self.maju)
         self.master.addWidget(self.mundur)
         self.master.addWidget(self.kanan)
@@ -130,11 +145,23 @@ class appGUI(QWidget):
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
+        self.lockButtons()
+        self.show()
         
+    def developerOptions(self):
+        self.appInit()
         
     def restart(self):
-        self.clears()
-        self.initSerial()
+         self.clears()
+         for s in self.sers:   
+            try:
+                s.close()
+            except Exception:
+                pass
+         self.clears()
+         self.setLayout(None)
+         self.resize(400, 700)
+         self.initSerial()
         
     def clears(self):
         self.maju.clearFocus()
@@ -191,18 +218,71 @@ class appGUI(QWidget):
             self.clears()
         
         self.serialComs(payload)
-            
+    
+    def lockButtons(self):
+        msg = self.berapaKali.text()
+        if msg != "":
+            try:
+                msgI = int(msg)
+            except:
+                ms = 3000
+            else:
+                ms = 3000 * msgI
+        else:
+            ms = 3000
+        tombol = [self.maju, self.mundur, self.kanan, self.kiri]
+        for b in tombol:
+            b.setDisabled(True)
+        QTimer.singleShot(ms, lambda: [b.setDisabled(False) for b in tombol])
+        
     def sendSerialMaju(self):
-        self.serialComs("FFw01")
+        self.lockButtons()
+        msg = self.berapaKali.text()
+        msgI = int(msg)
+        if 0 < msgI < 100 and len(msg) == 2:
+            payload = "FFw" + msg
+        else:
+            payload = "FFw01"
+
+        self.serialComs(payload)
+        
         
     def sendSerialMundur(self):
-        self.serialComs("FFs01")
+        self.lockButtons()
+        msg = self.berapaKali.text()
+        msgI = int(msg)
+        if 0 < msgI < 100 and len(msg) == 2:
+            payload = "FFs" + msg
+        else:
+            payload = "FFs01"
+
+        self.serialComs(payload)
+        
             
     def sendSerialKanan(self):
-        self.serialComs("FFd01")
+        self.lockButtons()
+        msg = self.berapaKali.text()
+        msgI = int(msg)
+        if 0 < msgI < 100 and len(msg) == 2:
+            payload = "FFd" + msg
+        elif 0 < msgI < 100 and len(msg) == 1:
+            payload = "FFd0" + msg
+        else:
+            payload = "FFd01"
+
+        self.serialComs(payload)
+        
             
     def sendSerialKiri(self):
-        self.serialComs("FFa01")
+        self.lockButtons()
+        msg = self.berapaKali.text()
+        msgI = int(msg)
+        if 0 < msgI < 100:
+            payload = "FFa" + msg
+        else:
+            payload = "FFa01"
+
+        self.serialComs(payload)
             
     def serialComs(self, command):
         terkirim = 0
