@@ -30,8 +30,9 @@ class appGUI(QWidget):
         self.initSerialUser()
     
     def appInitUser(self):
-        self.setWindowTitle("appGUI")
+        self.setWindowTitle("ROBOT JAGO")
         self.setGeometry(600, 600, 400, 400)
+        self.setFixedSize(500, 400)
         self.master1 = QVBoxLayout()
         
         self.dialogText = QTextEdit()
@@ -42,7 +43,7 @@ class appGUI(QWidget):
         self.text.setFixedWidth(500)
         self.text.setAlignment(Qt.AlignCenter)
         self.text.setDisabled(False)
-        
+        self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
         
@@ -82,8 +83,9 @@ class appGUI(QWidget):
     
     def appInit(self):
         QWidget().setLayout(self.layout())
-        self.setWindowTitle("appGUI")
+        self.setWindowTitle("ROBOT JAGO")
         self.setGeometry(600, 600, 400, 600)
+        self.setFixedSize(500, 600)
         self.master = QVBoxLayout()
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         
