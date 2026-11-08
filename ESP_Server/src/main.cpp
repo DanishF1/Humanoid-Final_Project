@@ -1,18 +1,14 @@
 //INI ESP32 YANG BARU
 #include <Arduino.h>
-#include <EEPROM.h>
 #include <WiFi.h>
 #include <esp_err.h>
-#include <ArduinoJson.h>
 #include <esp_now.h>
 #include <esp_wifi.h>
-#include "LittleFS.h"
 #include "class.h"
 #include "espnow.h"
 
-const int EEPROM_SIZE = 512;
 const int CHANNEL = 6;
-const int buzzer = 14;
+const int buzzer = 16;
 
 //servo-servo
 //SERVO KAKI KIRI

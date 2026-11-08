@@ -8,11 +8,7 @@
 #include "SPIFFS.h"
 #include "motorik.h"
 #include <esp_err.h>
-extern int nomorAntrean;
 extern uint8_t mac_addresses[1][6];
-extern int address;
-extern int addressTime;
-extern String jamskr;
 JsonDocument j;
 extern String payloadEN;  
 
