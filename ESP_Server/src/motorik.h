@@ -37,7 +37,7 @@ class rawMotorik{
     public:
 
 int interpolation(int sudutAwal, int sudutAkhir, int waktuBerjalan, int waktuTarget){
-    if(waktuBerjalan == waktuTarget){
+    if(waktuBerjalan >= waktuTarget){
         return sudutAkhir;
     }else{
         float progress = (float)waktuBerjalan/waktuTarget;
@@ -55,13 +55,13 @@ void kakiKananMaju(){
         deserializeJson(doc, file);
         int total_frames = doc["total_frames"];
         int total_times = doc["total_times"];
-        int times[total_times] = {doc["times"]};
-        int frames[total_frames][14] = {doc["frames"]}; 
-        int timeSize = sizeof(times)/sizeof(times[0]);
+        JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
 
-        for (int i=0; i<timeSize;i++){
+        for (int i=0; i<times.size();i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
+            int tesSudut;
             unsigned long timeNows = millis();
             int sudutAwal[14] = {
             servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
@@ -112,11 +112,10 @@ if(LittleFS.exists("/majuKakiKiri.json")){
         deserializeJson(doc, file);
         int total_frames = doc["total_frames"];
         int total_times = doc["total_times"];
-        int times[total_times] = {doc["times"]};
-        int frames[total_frames][14] = {doc["frames"]}; 
-        int timeSize = sizeof(times)/sizeof(times[0]);
+        JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
 
-        for (int i=0; i<timeSize;i++){
+        for (int i=0; i<times.size();i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
             unsigned long timeNows = millis();

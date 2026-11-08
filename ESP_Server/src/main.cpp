@@ -66,11 +66,10 @@ void setup() {
   Serial.println("Buzzer Menyala");
   digitalWrite(buzzer, HIGH);
   digitalWrite(LED_BUILTIN, LOW);
-  esp_wifi_set_ps(WIFI_PS_NONE);
 
   WiFi.mode(WIFI_STA);
 
-  esp_err_t power = esp_wifi_set_max_tx_power(78);
+  esp_err_t power = esp_wifi_set_max_tx_power(35);
     if (power == ESP_OK) {
         Serial.println("TX Power berhasil diatur ke 19.5 dBm");
     }else{
@@ -158,26 +157,25 @@ void setup() {
   servoTanganKananRoll.attach(TANGAN_KANAN_ROLL, 500, 2400);
   servoSikuKanan.attach(SIKU_KANAN, 500, 2400);
 
-  servoKakiKiriYaw.write(45);
-  servoKakiKiriPitch.write(45);
-  servoLututKiri.write(45);
-  servoTelapakKiri.write(45);
+Servo* semua[14] = { &servoKakiKiriYaw, &servoKakiKiriPitch, &servoLututKiri, &servoTelapakKiri,
+                     &servoKakiKananYaw, &servoKakiKananPitch, &servoLututKanan, &servoTelapakKanan,
+                     &servoTanganKiriPitch, &servoTanganKiriRoll, &servoSikuKiri,
+                     &servoTanganKananPitch, &servoTanganKananRoll, &servoSikuKanan };
+int pin[14] = { KAKI_KIRI_YAW, KAKI_KIRI_PITCH, LUTUT_KIRI, TELAPAK_KIRI,
+                KAKI_KANAN_YAW, KAKI_KANAN_PITCH, LUTUT_KANAN, TELAPAK_KANAN,
+                TANGAN_KIRI_PITCH, TANGAN_KIRI_ROLL, SIKU_KIRI,
+                TANGAN_KANAN_PITCH, TANGAN_KANAN_ROLL, SIKU_KANAN };
 
-  servoKakiKananYaw.write(45);
-  servoKakiKananPitch.write(45);
-  servoLututKanan.write(45);
-  servoTelapakKanan.write(45);
-
-  servoTanganKiriPitch.write(45);
-  servoTanganKiriRoll.write(45);
-  servoSikuKiri.write(45);
-
-  servoTanganKananPitch.write(45);
-  servoTanganKananRoll.write(45);
-  servoSikuKanan.write(45);
+for(int k = 0; k < 14; k++){
+  semua[k]->setPeriodHertz(50);
+  semua[k]->attach(pin[k], 500, 2400);
+  semua[k]->write(45);
+  delay(300);   // beri waktu supply pulih sebelum servo berikutnya
+}
 
   Serial.println("Siap.");
   digitalWrite(buzzer,LOW);
+     delay(2000);
 }
 
 void loop() {
