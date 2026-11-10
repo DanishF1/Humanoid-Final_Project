@@ -42,6 +42,7 @@ class appGUI(QWidget):
         self.setGeometry(600, 600, 400, 400)
         self.setFixedSize(500, 400)
         self.master1 = QVBoxLayout()
+        self.helper1 = QHBoxLayout()
         
         self.dialogText = QTextEdit()
         
@@ -84,8 +85,9 @@ class appGUI(QWidget):
         self.master1.addWidget(self.mundur)
         self.master1.addWidget(self.kanan)
         self.master1.addWidget(self.kiri)
-        self.master1.addWidget(self.reset)
-        self.master1.addWidget(self.devop)
+        self.helper1.addWidget(self.reset)
+        self.helper1.addWidget(self.devop)
+        self.master1.addLayout(self.helper1)
         self.master1.setSpacing(10)
         self.berapaKali.setEnabled(True)
         self.master1.addStretch()
