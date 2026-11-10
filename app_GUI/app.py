@@ -29,7 +29,15 @@ class appGUI(QWidget):
         self.appInitUser()
         self.initSerialUser()
     
+    def clearLayout(self):
+        old = self.layout()
+        if old is not None:
+            QWidget().setLayout(old)
+    
     def appInitUser(self):
+        self.clearLayout()
+        self.btnCommand = None
+        self.command = None
         self.setWindowTitle("ROBOT JAGO")
         self.setGeometry(600, 600, 400, 400)
         self.setFixedSize(500, 400)
@@ -44,27 +52,6 @@ class appGUI(QWidget):
         self.text.setAlignment(Qt.AlignCenter)
         self.text.setDisabled(False)
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
-        
-        # 1. Buat 2 Panel Container
-        self.panel_user = QWidget()
-        self.panel_dev = QWidget()
-        
-        # 2. Pasang Layout masing-masing ke Panel
-        self.master1 = QVBoxLayout()
-        # ... (tambahkan widget-widget User ke self.master1) ...
-        self.panel_user.setLayout(self.master1)
-        
-        self.master = QVBoxLayout()
-        # ... (tambahkan widget-widget Dev ke self.master) ...
-        self.panel_dev.setLayout(self.master)
-        
-        # 3. Masukkan kedua Panel ke Layout Utama Window
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(self.panel_user)
-        main_layout.addWidget(self.panel_dev)
-        self.setLayout(main_layout)
-        
-        self.balikKeUser()
         
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
@@ -106,7 +93,7 @@ class appGUI(QWidget):
     
             
     def appInit(self):
-        QWidget().setLayout(self.layout())
+        self.clearLayout()
         self.setWindowTitle("ROBOT JAGO")
         self.setGeometry(600, 600, 400, 600)
         self.setFixedSize(500, 600)
@@ -156,8 +143,7 @@ class appGUI(QWidget):
         self.reset.setIcon(QIcon(retry))
         self.reset.clicked.connect(self.restart)
         
-        self.balik = QPushButton()
-        self.balik.setIcon(QIcon(retry))
+        self.balik = QPushButton("Kembali")
         self.balik.clicked.connect(self.balikKeUser)
             
         self.master.addWidget(self.text)
@@ -181,14 +167,11 @@ class appGUI(QWidget):
         self.show()
         
     def developerOptions(self):
-        self.panel_user.hide()
-        self.panel_dev.show()
-        self.setFixedSize(500, 650)
+        self.appInit()
     
     def balikKeUser(self):
-        self.panel_dev.hide()
-        self.panel_user.show()
-        self.setFixedSize(500, 400)
+        self.appInitUser()
+        self.show()
         
     def restartUser(self):
          self.clears()
@@ -199,8 +182,8 @@ class appGUI(QWidget):
                 pass
          self.clears()
          self.appInitUser()
-         self.resize(400, 700)
-         self.initSerial()  
+         self.show()
+         self.initSerialUser()
         
     def restart(self):
          self.clears()
@@ -215,15 +198,13 @@ class appGUI(QWidget):
          self.initSerial()
         
     def clears(self):
-        self.maju.clearFocus()
-        self.mundur.clearFocus()
-        self.kanan.clearFocus()
-        self.kiri.clearFocus()
-        self.btnCommand.clearFocus()
-        self.command.clear()
+        for w in (self.maju, self.mundur, self.kanan, self.kiri, self.btnCommand):
+            if w is not None:
+                w.clearFocus()
+        if self.command is not None:
+            self.command.clear()
     
     def initSerialUser(self):
-         """Logika untuk membuka semua port serial di daftar usbs"""
          self.sers = []
          laporan = []
          for usb in usbs:
@@ -237,7 +218,6 @@ class appGUI(QWidget):
             laporan.append(pesan)
         
     def initSerial(self):
-        """Logika untuk membuka semua port serial di daftar usbs"""
         self.sers = []
         laporan = []
         for usb in usbs:
@@ -284,7 +264,13 @@ class appGUI(QWidget):
         tombol = [self.maju, self.mundur, self.kanan, self.kiri]
         for b in tombol:
             b.setDisabled(True)
-        QTimer.singleShot(ms, lambda: [b.setDisabled(False) for b in tombol])
+        def unlock():
+            for b in tombol:
+                try:
+                    b.setDisabled(False)
+                except RuntimeError:
+                    pass
+        QTimer.singleShot(ms, unlock)
         
     def sendSerialMaju(self):
         self.lockButtons()
@@ -310,7 +296,7 @@ class appGUI(QWidget):
         try:
             msgI = int(msg)
         except:
-            self.serialComs("FFw01")
+            self.serialComs("FFs01")
             return
         if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFs" + msg
@@ -328,7 +314,7 @@ class appGUI(QWidget):
         try:
             msgI = int(msg)
         except:
-            self.serialComs("FFw01")
+            self.serialComs("FFd01")
             return
         if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFd" + msg
@@ -346,7 +332,7 @@ class appGUI(QWidget):
         try:
             msgI = int(msg)
         except:
-            self.serialComs("FFw01")
+            self.serialComs("FFa01")
             return
         if 0 < msgI < 100 and len(msg) == 2:
             payload = "FFa" + msg
@@ -374,7 +360,6 @@ class appGUI(QWidget):
         self.clears()
         
     def bacaSerial(self):
-        """Membaca 1 line dari tiap ESP32 dan menampilkannya di dialogText"""
         for ser in self.sers:
             if ser.is_open:
                 try:
