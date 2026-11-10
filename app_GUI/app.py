@@ -20,9 +20,9 @@ import sys
 
 baudrate = 115200
 usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyUSB4", "/dev/ttyUSB5"]
-asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.jpeg"
-setting = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/settings.png"
-retry = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/retry.png"
+asset = "/assets/btk.jpeg"
+setting = "/assets/settings.png"
+retry = "/assets/retry.png"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
