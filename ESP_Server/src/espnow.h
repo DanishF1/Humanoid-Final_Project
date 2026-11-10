@@ -5,6 +5,7 @@
 #define led 2
 #include <ArduinoJson.h>
 #include "motorik.h"
+extern const int buzzer;
 int nomorAntrean = 0;
 int address = 0;        
 int addressTime = 1;    
@@ -20,18 +21,15 @@ struct data{
 data dataTerima;
 data dataKirim;
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  sendToBridge s;
-  Serial.println("MENGIRIM");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "SEND OK" : "SEND FAIL");
+
 }
 
 
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   sendToBridge s;
   motorik m;
+  boxing b;
   payloadEN = dataTerima.pesan;
-  Serial.println("DATA DITERIMA");
-  Serial.println(dataTerima.pesan);
   memset(&dataTerima, 0, sizeof(dataTerima));                                      
   memcpy(&dataTerima, incomingData, min(len, (int)sizeof(dataTerima.pesan) - 1));    
 
@@ -40,12 +38,11 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   String header = pesan.substring(0, 2);
   String leng;
   int lengInt;
-  
+  unsigned long timeNow = millis();
   if(header == "FF"){
-  Serial.println("INPUT VALID");
   if(pesan.length() == 5){
-    //FFw01
     char cmd;
+    unsigned long waktuBerjalan =  millis() - timeNow;
     leng = pesan.substring(3,5);
     lengInt = leng.toInt();
     cmd = pesan[2];
@@ -62,15 +59,20 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
       case 'a':
       m.belokKiri(lengInt);
       break;
+      case 'f':
+      b.fm(lengInt);
+      case 'b':
+      b.bc(lengInt);
       default:
        break;
     }
-  }else if(pesan.length() == 6){
-    //buat kalo joget
-    String cmd;
-    leng = pesan.substring(4,6);
-    lengInt = leng.toInt();
-    cmd = pesan.substring(2,4);
+    if (waktuBerjalan <= 255){
+      analogWrite(buzzer, waktuBerjalan-255);
+    }else{
+      digitalWrite(buzzer, LOW);
+    }
+  }else{
+    return;
   }
 
   }
