@@ -44,6 +44,28 @@ class appGUI(QWidget):
         self.text.setAlignment(Qt.AlignCenter)
         self.text.setDisabled(False)
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
+        
+        # 1. Buat 2 Panel Container
+        self.panel_user = QWidget()
+        self.panel_dev = QWidget()
+        
+        # 2. Pasang Layout masing-masing ke Panel
+        self.master1 = QVBoxLayout()
+        # ... (tambahkan widget-widget User ke self.master1) ...
+        self.panel_user.setLayout(self.master1)
+        
+        self.master = QVBoxLayout()
+        # ... (tambahkan widget-widget Dev ke self.master) ...
+        self.panel_dev.setLayout(self.master)
+        
+        # 3. Masukkan kedua Panel ke Layout Utama Window
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.panel_user)
+        main_layout.addWidget(self.panel_dev)
+        self.setLayout(main_layout)
+        
+        self.balikKeUser()
+        
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
         
@@ -58,7 +80,8 @@ class appGUI(QWidget):
         
         self.reset = QPushButton()
         self.reset.setIcon(QIcon(retry))
-        self.reset.clicked.connect(self.restart)
+        self.reset.clicked.connect(self.restartUser)
+        
         
         self.devop = QPushButton()
         self.devop.setIcon(QIcon(setting))
@@ -67,7 +90,7 @@ class appGUI(QWidget):
         self.berapaKali = QLineEdit()
         self.berapaKali.setPlaceholderText("Berapa Kali Robot Bergerak")
         self.berapaKali.setAlignment(Qt.AlignCenter)
-        
+
         self.master1.addWidget(self.text)
         self.master1.addWidget(self.berapaKali)
         self.master1.addWidget(self.maju)
@@ -81,6 +104,7 @@ class appGUI(QWidget):
         self.master1.addStretch()
         self.setLayout(self.master1)
     
+            
     def appInit(self):
         QWidget().setLayout(self.layout())
         self.setWindowTitle("ROBOT JAGO")
@@ -128,11 +152,14 @@ class appGUI(QWidget):
         self.dialogt.setFixedWidth(500)
         self.dialogt.setAlignment(Qt.AlignCenter)
         
-        self.reset = QPushButton("Restart Aplikasi")
+        self.reset = QPushButton()
         self.reset.setIcon(QIcon(retry))
         self.reset.clicked.connect(self.restart)
         
-        
+        self.balik = QPushButton()
+        self.balik.setIcon(QIcon(retry))
+        self.balik.clicked.connect(self.balikKeUser)
+            
         self.master.addWidget(self.text)
         self.master.addWidget(self.berapaKali)
         self.master.addWidget(self.maju)
@@ -145,6 +172,7 @@ class appGUI(QWidget):
         self.master.addWidget(self.dialogt)
         self.master.addWidget(self.dialogText)
         self.master.addWidget(self.reset)
+        self.master.addWidget(self.balik)
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
@@ -153,7 +181,26 @@ class appGUI(QWidget):
         self.show()
         
     def developerOptions(self):
-        self.appInit()
+        self.panel_user.hide()
+        self.panel_dev.show()
+        self.setFixedSize(500, 650)
+    
+    def balikKeUser(self):
+        self.panel_dev.hide()
+        self.panel_user.show()
+        self.setFixedSize(500, 400)
+        
+    def restartUser(self):
+         self.clears()
+         for s in self.sers:   
+            try:
+                s.close()
+            except Exception:
+                pass
+         self.clears()
+         self.appInitUser()
+         self.resize(400, 700)
+         self.initSerial()  
         
     def restart(self):
          self.clears()
@@ -163,7 +210,7 @@ class appGUI(QWidget):
             except Exception:
                 pass
          self.clears()
-         self.setLayout(None)
+         self.appInit()
          self.resize(400, 700)
          self.initSerial()
         
