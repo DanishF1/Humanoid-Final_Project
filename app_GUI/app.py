@@ -24,6 +24,7 @@ asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.jpeg"
 setting = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/settings.png"
 retry = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/retry.png"
 bg = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/bg.png"
+bg1 = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/bg1.png"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -64,13 +65,25 @@ class appGUI(QWidget):
         self.maju = QPushButton("↑")
         self.maju.clicked.connect(self.sendSerialMaju)
         self.setStyleSheet(f"""
-            QPushButton {{
-                border-image: url({bg}) 0 0 0 0 stretch stretch;
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-            }}
-        """)
+    QPushButton {{
+        border-image: url({bg1}) 0 0 0 0 stretch stretch;
+        color: white;
+        font-weight: bold;
+        padding: 8px;
+    }}
+    QPushButton:hover {{
+        border-image: url({bg1}) 0 0 0 0 stretch stretch;
+        color: #ffe082;
+    }}
+    QPushButton:pressed {{
+        border-image: url({bg}) 0 0 0 0 stretch stretch;
+        padding-top: 10px;   /* efek tertekan */
+    }}
+    QPushButton:disabled {{
+        border-image: url({bg}) 0 0 0 0 stretch stretch;
+        color: #888888;
+    }}
+""")
         self.mundur = QPushButton("↓")
         self.mundur.clicked.connect(self.sendSerialMundur)
         
