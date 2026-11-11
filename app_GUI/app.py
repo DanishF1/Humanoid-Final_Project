@@ -20,7 +20,7 @@ import sys
 
 baudrate = 115200
 usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyUSB4", "/dev/ttyUSB5"]
-asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.jpeg"
+asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.png"
 setting = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/settings.png"
 retry = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/retry.png"
 bg = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/bg.png"
