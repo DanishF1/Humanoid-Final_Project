@@ -157,23 +157,6 @@ void setup() {
   servoTanganKananRoll.attach(TANGAN_KANAN_ROLL, 500, 2400);
   servoSikuKanan.attach(SIKU_KANAN, 500, 2400);
 
-Servo* semua[14] = { &servoKakiKiriYaw, &servoKakiKiriPitch, &servoLututKiri, &servoTelapakKiri,
-                     &servoKakiKananYaw, &servoKakiKananPitch, &servoLututKanan, &servoTelapakKanan,
-                     &servoTanganKiriPitch, &servoTanganKiriRoll, &servoSikuKiri,
-                     &servoTanganKananPitch, &servoTanganKananRoll, &servoSikuKanan };
-int pin[14] = { KAKI_KIRI_YAW, KAKI_KIRI_PITCH, LUTUT_KIRI, TELAPAK_KIRI,
-                KAKI_KANAN_YAW, KAKI_KANAN_PITCH, LUTUT_KANAN, TELAPAK_KANAN,
-                TANGAN_KIRI_PITCH, TANGAN_KIRI_ROLL, SIKU_KIRI,
-                TANGAN_KANAN_PITCH, TANGAN_KANAN_ROLL, SIKU_KANAN };
-
-for(int k = 0; k < 14; k++){
-  semua[k]->setPeriodHertz(50);
-  semua[k]->attach(pin[k], 500, 2400);
-  semua[k]->write(45);
-  delay(300);   // beri waktu supply pulih sebelum servo berikutnya
-}
-
-  Serial.println("Siap.");
   digitalWrite(buzzer,LOW);
      delay(2000);
 }
