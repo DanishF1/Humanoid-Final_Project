@@ -20,9 +20,9 @@ import sys
 
 baudrate = 115200
 usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/ttyUSB4", "/dev/ttyUSB5"]
-asset = "/assets/btk.jpeg"
-setting = "/assets/settings.png"
-retry = "/assets/retry.png"
+asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.jpeg"
+setting = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/settings.png"
+retry = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/retry.png"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -45,7 +45,7 @@ class appGUI(QWidget):
         self.helper1 = QHBoxLayout()
         
         self.dialogText = QTextEdit()
-        
+        self.special = QHBoxLayout()
         self.setWindowIcon(QIcon(asset))
         self.text = QLabel("Tekan Tombol untuk Menggerakkan Robot")
         self.text.setFixedHeight(25)
@@ -53,6 +53,10 @@ class appGUI(QWidget):
         self.text.setAlignment(Qt.AlignCenter)
         self.text.setDisabled(False)
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
+        
+        self.stance = QPushButton("Boxing Stance")
+        self.stance.clicked.connect(self.Stance)
+        self.special.addWidget(self.stance)
         
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
@@ -70,7 +74,10 @@ class appGUI(QWidget):
         self.reset.setIcon(QIcon(retry))
         self.reset.clicked.connect(self.restartUser)
         
-        
+        self.bicepCurl = QPushButton("Bicep Curl")
+        self.bicepCurl.clicked.connect(self.sendCurl)
+        self.MFlex = QPushButton("Muscle Flex")
+        self.MFlex.clicked.connect(self.sendFlex)
         self.devop = QPushButton()
         self.devop.setIcon(QIcon(setting))
         self.devop.clicked.connect(self.developerOptions)
@@ -78,7 +85,6 @@ class appGUI(QWidget):
         self.berapaKali = QLineEdit()
         self.berapaKali.setPlaceholderText("Berapa Kali Robot Bergerak")
         self.berapaKali.setAlignment(Qt.AlignCenter)
-
         self.master1.addWidget(self.text)
         self.master1.addWidget(self.berapaKali)
         self.master1.addWidget(self.maju)
@@ -86,35 +92,46 @@ class appGUI(QWidget):
         self.master1.addWidget(self.kanan)
         self.master1.addWidget(self.kiri)
         self.helper1.addWidget(self.reset)
+        self.special.addWidget(self.bicepCurl)
+        self.special.addWidget(self.MFlex)
         self.helper1.addWidget(self.devop)
+        self.master1.addLayout(self.special)
         self.master1.addLayout(self.helper1)
         self.master1.setSpacing(10)
         self.berapaKali.setEnabled(True)
         self.master1.addStretch()
         self.setLayout(self.master1)
     
-            
+    def Stance(self):
+        ...
     def appInit(self):
         self.clearLayout()
-        self.setWindowTitle("ROBOT JAGO")
+        self.setWindowTitle("ROBOT JAGO - ADVANCED")
         self.setGeometry(600, 600, 400, 600)
         self.setFixedSize(500, 600)
         self.master = QVBoxLayout()
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
-        
+        self.special = QHBoxLayout()
         self.setWindowIcon(QIcon(asset))
         self.text = QLabel("Tekan Tombol untuk Menggerakkan Robot")
         self.text.setFixedHeight(25)
         self.text.setFixedWidth(500)
         self.text.setAlignment(Qt.AlignCenter)
         self.text.setDisabled(False)
-        
+        self.special = QHBoxLayout()
         self.berapaKali = QLineEdit()
         self.berapaKali.setPlaceholderText("Berapa Kali Robot Bergerak")
         self.berapaKali.setAlignment(Qt.AlignCenter)
-        
+        self.bicepCurl = QPushButton("Bicep Curl")
+        self.bicepCurl.clicked.connect(self.sendCurl)
+        self.MFlex = QPushButton("Muscle Flex")
+        self.MFlex.clicked.connect(self.sendFlex)
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
+        
+        self.stance = QPushButton("Boxing Stance")
+        self.stance.clicked.connect(self.Stance)
+        self.special.addWidget(self.stance)
         
         self.mundur = QPushButton("Mundur")
         self.mundur.clicked.connect(self.sendSerialMundur)
@@ -154,6 +171,9 @@ class appGUI(QWidget):
         self.master.addWidget(self.mundur)
         self.master.addWidget(self.kanan)
         self.master.addWidget(self.kiri)
+        self.special.addWidget(self.bicepCurl)
+        self.special.addWidget(self.MFlex)
+        self.master.addLayout(self.special)
         self.master.addWidget(self.commandt)
         self.master.addWidget(self.command)
         self.master.addWidget(self.btnCommand)
@@ -161,11 +181,11 @@ class appGUI(QWidget):
         self.master.addWidget(self.dialogText)
         self.master.addWidget(self.reset)
         self.master.addWidget(self.balik)
+
+        
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
-        self.berapaKali.setEnabled(True)
-        self.lockButtons()
         self.show()
         
     def developerOptions(self):
@@ -252,18 +272,18 @@ class appGUI(QWidget):
         
         self.serialComs(payload)
     
-    def lockButtons(self):
+    def lockButtons(self, ms):
         msg = self.berapaKali.text()
         if msg != "":
             try:
                 msgI = int(msg)
             except:
-                ms = 3000
+                ms = 0
             else:
-                ms = 3000 * msgI
+                ms = ms * msgI
         else:
-            ms = 3000
-        tombol = [self.maju, self.mundur, self.kanan, self.kiri]
+            ...
+        tombol = [self.maju, self.mundur, self.kanan, self.kiri, self.bicepCurl, self.MFlex, self.stance]
         for b in tombol:
             b.setDisabled(True)
         def unlock():
@@ -275,7 +295,7 @@ class appGUI(QWidget):
         QTimer.singleShot(ms, unlock)
         
     def sendSerialMaju(self):
-        self.lockButtons()
+        self.lockButtons(4000)
         msg = self.berapaKali.text()
         try:
             msgI = int(msg)
@@ -344,7 +364,39 @@ class appGUI(QWidget):
             payload = "FFa01"
 
         self.serialComs(payload)
-            
+    def sendCurl(self):
+        self.lockButtons(4000)
+        msg = self.berapaKali.text()
+        try:
+            msgI = int(msg)
+        except:
+            self.serialComs("FFb01")
+            return
+        if 0 < msgI < 100 and len(msg) == 2:
+            payload = "FFb" + msg
+        elif 0 < msgI < 100 and len(msg) == 1:
+            payload = "FFb0" + msg
+        else:
+            payload = "FFb01"
+
+        self.serialComs(payload)
+        
+    def sendFlex(self):
+            self.lockButtons(4000)
+            msg = self.berapaKali.text()
+            try:
+                msgI = int(msg)
+            except:
+                self.serialComs("FFf01")
+                return
+            if 0 < msgI < 100 and len(msg) == 2:
+                payload = "FFf" + msg
+            elif 0 < msgI < 100 and len(msg) == 1:
+                payload = "FFf0" + msg
+            else:
+                payload = "FFf01"
+    
+            self.serialComs(payload)
     def serialComs(self, command):
         terkirim = 0
         for ser in self.sers:
