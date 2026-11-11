@@ -157,6 +157,21 @@ void setup() {
   servoTanganKananRoll.attach(TANGAN_KANAN_ROLL, 500, 2400);
   servoSikuKanan.attach(SIKU_KANAN, 500, 2400);
 
+    servoTanganKananRoll.write(0);    // 0
+  servoTanganKananPitch.write(90);  // 1
+  servoSikuKanan.write(0);          // 2
+  servoTanganKiriRoll.write(0);     // 3
+  servoTanganKiriPitch.write(90);   // 4
+  servoSikuKiri.write(0);           // 5
+  servoKakiKananYaw.write(90);      // 6
+  servoKakiKananPitch.write(90);    // 7
+  servoLututKanan.write(0);         // 8
+  servoTelapakKanan.write(90);      // 9
+  servoKakiKiriYaw.write(90);       // 10
+  servoKakiKiriPitch.write(90);     // 11
+  servoLututKiri.write(0);          // 12
+  servoTelapakKiri.write(90);       // 13
+
   digitalWrite(buzzer,LOW);
      delay(2000);
 }

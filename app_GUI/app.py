@@ -23,6 +23,7 @@ usbs = ["/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3", "/dev/tt
 asset = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/btk.jpeg"
 setting = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/settings.png"
 retry = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/retry.png"
+bg = "/home/dan-eksakdev/Documents/Final_Project2/app_GUI/assets/bg.png"
 class appGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -41,6 +42,8 @@ class appGUI(QWidget):
         self.setWindowTitle("ROBOT JAGO")
         self.setGeometry(600, 600, 400, 400)
         self.setFixedSize(500, 400)
+
+        self.setAutoFillBackground(True)
         self.master1 = QVBoxLayout()
         self.helper1 = QHBoxLayout()
         
@@ -58,16 +61,23 @@ class appGUI(QWidget):
         self.stance.clicked.connect(self.Stance)
         self.special.addWidget(self.stance)
         
-        self.maju = QPushButton("Maju")
+        self.maju = QPushButton("↑")
         self.maju.clicked.connect(self.sendSerialMaju)
-        
-        self.mundur = QPushButton("Mundur")
+        self.setStyleSheet(f"""
+            QPushButton {{
+                border-image: url({bg}) 0 0 0 0 stretch stretch;
+                color: white;
+                font-weight: bold;
+                padding: 8px;
+            }}
+        """)
+        self.mundur = QPushButton("↓")
         self.mundur.clicked.connect(self.sendSerialMundur)
         
-        self.kanan = QPushButton("Belok Kanan")
+        self.kanan = QPushButton("→")
         self.kanan.clicked.connect(self.sendSerialKanan)
         
-        self.kiri = QPushButton("Belok Kiri")
+        self.kiri = QPushButton("←")
         self.kiri.clicked.connect(self.sendSerialKiri)
         
         self.reset = QPushButton()
@@ -107,8 +117,8 @@ class appGUI(QWidget):
     def appInit(self):
         self.clearLayout()
         self.setWindowTitle("ROBOT JAGO - ADVANCED")
-        self.setGeometry(600, 600, 400, 600)
-        self.setFixedSize(500, 600)
+        self.setGeometry(600, 600, 400, 900)
+        self.setFixedSize(500, 900)
         self.master = QVBoxLayout()
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         self.special = QHBoxLayout()
@@ -216,7 +226,7 @@ class appGUI(QWidget):
                 pass
          self.clears()
          self.appInit()
-         self.resize(400, 700)
+         self.resize(400, 900)
          self.initSerial()
         
     def clears(self):
@@ -283,17 +293,17 @@ class appGUI(QWidget):
                 ms = ms * msgI
         else:
             ...
-        tombol = [self.maju, self.mundur, self.kanan, self.kiri, self.bicepCurl, self.MFlex, self.stance]
-        for b in tombol:
+        self.tombol = [self.maju, self.mundur, self.kanan, self.kiri, self.bicepCurl, self.MFlex, self.stance]
+        for b in self.tombol:
             b.setDisabled(True)
-        def unlock():
-            for b in tombol:
+    
+        QTimer.singleShot(ms, self.unlock)
+    def unlock(self):
+            for b in self.tombol:
                 try:
                     b.setDisabled(False)
                 except RuntimeError:
-                    pass
-        QTimer.singleShot(ms, unlock)
-        
+                        ...    
     def sendSerialMaju(self):
         self.lockButtons(4000)
         msg = self.berapaKali.text()
@@ -313,7 +323,7 @@ class appGUI(QWidget):
         
         
     def sendSerialMundur(self):
-        self.lockButtons()
+        self.lockButtons(4000)
         msg = self.berapaKali.text()
         try:
             msgI = int(msg)
@@ -331,7 +341,7 @@ class appGUI(QWidget):
         
             
     def sendSerialKanan(self):
-        self.lockButtons()
+        self.lockButtons(5000)
         msg = self.berapaKali.text()
         try:
             msgI = int(msg)
@@ -349,7 +359,7 @@ class appGUI(QWidget):
         
             
     def sendSerialKiri(self):
-        self.lockButtons()
+        self.lockButtons(5000)
         msg = self.berapaKali.text()
         try:
             msgI = int(msg)
@@ -406,10 +416,13 @@ class appGUI(QWidget):
                     print(f"Serial Sent ke {ser.port}: {command}")
                     terkirim += 1
                 except serial.SerialException as e:
+                    
                     print(f"Error saat mengirim data serial ke {ser.port}: {e}")
                     self.dialogText.setText(f"Error saat mengirim data serial ke {ser.port}: {e}")
+                   
         if terkirim == 0:
             print(f"[Offline] Tidak ada port serial aktif. Perintah '{command}' gagal terkirim.")
+            self.unlock()
             self.dialogText.setText(f"[Offline] Tidak ada port serial aktif. Perintah '{command}' gagal terkirim.")
         self.clears()
         
