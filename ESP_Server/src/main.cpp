@@ -6,7 +6,12 @@
 #include <esp_wifi.h>
 #include "class.h"
 #include "espnow.h"
+#include "tone.h"
 
+long long timeSetup;
+long long timeLoop;
+int fMaks = 4000;
+int fMin = 1000;
 const int CHANNEL = 6;
 const int buzzer = 16;
 
@@ -55,9 +60,9 @@ Servo servoTanganKananPitch;
 Servo servoTanganKananRoll;
 Servo servoSikuKanan;
 
+
 void setup() {
  Serial.begin(115200);
- 
   Serial.println("Transmitter Init...");
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(buzzer, OUTPUT);
@@ -66,6 +71,27 @@ void setup() {
   Serial.println("Buzzer Menyala");
   digitalWrite(buzzer, HIGH);
   digitalWrite(LED_BUILTIN, LOW);
+
+  tone(buzzer, fMaks);
+  unsigned long waktuMulai = millis();
+
+  while (millis() - waktuMulai < 500) {
+
+  }
+ tone(buzzer, fMin);
+   while (millis() - waktuMulai < 1000) {
+
+  }
+  tone(buzzer, fMaks);
+   while (millis() - waktuMulai < 1500) {
+
+  }
+  tone(buzzer, fMin);
+   while (millis() - waktuMulai < 2000) {
+
+  }
+  buzz();
+  noTone(buzzer);
 
   WiFi.mode(WIFI_STA);
 
@@ -172,10 +198,8 @@ void setup() {
   servoLututKiri.write(0);          // 12
   servoTelapakKiri.write(90);       // 13
 
-  digitalWrite(buzzer,LOW);
-     delay(2000);
 }
 
 void loop() {
-  
+ 
 }
