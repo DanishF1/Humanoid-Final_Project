@@ -30,14 +30,14 @@ const int LUTUT_KANAN = 14;
 const int TELAPAK_KANAN = 26;
 
 //SERVO TANGAN KIRI
-const int TANGAN_KIRI_PITCH = 23;
-const int TANGAN_KIRI_ROLL = 22;
+const int TANGAN_KIRI_PITCH = 22;
+const int TANGAN_KIRI_ROLL = 23;
 const int SIKU_KIRI = 21;
 
 //SERVO TANGAN KANAN
-const int TANGAN_KANAN_PITCH = 19;
-const int TANGAN_KANAN_ROLL = 18;
-const int SIKU_KANAN = 17;
+const int TANGAN_KANAN_PITCH = 18;
+const int TANGAN_KANAN_ROLL = 17;
+const int SIKU_KANAN = 19;
 
 // Kaki Kiri
 Servo servoKakiKiriYaw;
