@@ -97,6 +97,9 @@ class appGUI(QWidget):
         self.reset.setIcon(QIcon(retry))
         self.reset.clicked.connect(self.restartUser)
         
+        self.test = QPushButton()
+        self.restartESP = QPushButton()
+        
         self.bicepCurl = QPushButton("Bicep Curl")
         self.bicepCurl.clicked.connect(self.sendCurl)
         self.MFlex = QPushButton("Muscle Flex")
@@ -125,8 +128,6 @@ class appGUI(QWidget):
         self.master1.addStretch()
         self.setLayout(self.master1)
     
-    def Stance(self):
-        ...
     def appInit(self):
         self.clearLayout()
         self.setWindowTitle("ROBOT JAGO - ADVANCED")
@@ -151,6 +152,9 @@ class appGUI(QWidget):
         self.MFlex.clicked.connect(self.sendFlex)
         self.maju = QPushButton("Maju")
         self.maju.clicked.connect(self.sendSerialMaju)
+        
+        self.restartESP = QPushButton("Restart Robot")
+        self.restartESP.clicked.connect(self.restartesp)
         
         self.stance = QPushButton("Boxing Stance")
         self.stance.clicked.connect(self.Stance)
@@ -187,6 +191,9 @@ class appGUI(QWidget):
         
         self.balik = QPushButton("Kembali")
         self.balik.clicked.connect(self.balikKeUser)
+        
+        self.test = QPushButton("Test")
+        self.test.clicked.connect(self.sendTest)
             
         self.master.addWidget(self.text)
         self.master.addWidget(self.berapaKali)
@@ -197,6 +204,7 @@ class appGUI(QWidget):
         self.special.addWidget(self.bicepCurl)
         self.special.addWidget(self.MFlex)
         self.master.addLayout(self.special)
+        self.master.addWidget(self.test)
         self.master.addWidget(self.commandt)
         self.master.addWidget(self.command)
         self.master.addWidget(self.btnCommand)
@@ -204,13 +212,14 @@ class appGUI(QWidget):
         self.master.addWidget(self.dialogText)
         self.master.addWidget(self.reset)
         self.master.addWidget(self.balik)
+        self.master.addWidget(self.restartESP)
 
         
         self.master.setSpacing(10)
         self.master.addStretch()
         self.setLayout(self.master)
         self.show()
-        
+
     def developerOptions(self):
         self.appInit()
     
@@ -243,7 +252,7 @@ class appGUI(QWidget):
          self.initSerial()
         
     def clears(self):
-        for w in (self.maju, self.mundur, self.kanan, self.kiri, self.btnCommand):
+        for w in (self.maju, self.mundur, self.kanan, self.kiri, self.btnCommand, self.restartESP, self.MFlex, self.bicepCurl):
             if w is not None:
                 w.clearFocus()
         if self.command is not None:
@@ -306,7 +315,7 @@ class appGUI(QWidget):
                 ms = ms * msgI
         else:
             ...
-        self.tombol = [self.maju, self.mundur, self.kanan, self.kiri, self.bicepCurl, self.MFlex, self.stance]
+        self.tombol = [self.maju, self.mundur, self.kanan, self.kiri, self.bicepCurl, self.MFlex, self.stance,self.restartESP, self.test]
         for b in self.tombol:
             b.setDisabled(True)
     
@@ -334,7 +343,22 @@ class appGUI(QWidget):
 
         self.serialComs(payload)
         
-        
+    def sendTest(self):
+        self.lockButtons(6000)
+        msg = self.berapaKali.text()
+        try:
+            msgI = int(msg)
+        except:
+            self.serialComs("FFz01")
+            return
+        if 0 < msgI < 100 and len(msg) == 2:
+            payload = "FFz" + msg
+        elif 0 < msgI < 100 and len(msg) == 1:
+            payload = "FFsz" + msg
+        else:
+            payload = "FFz01"
+
+        self.serialComs(payload)
     def sendSerialMundur(self):
         self.lockButtons(4000)
         msg = self.berapaKali.text()
@@ -353,6 +377,13 @@ class appGUI(QWidget):
         self.serialComs(payload)
         
             
+    def Stance(self):
+        ...
+    
+    def restartesp(self):
+        self.serialComs("FFR01")
+        self.clears()
+        
     def sendSerialKanan(self):
         self.lockButtons(5000)
         msg = self.berapaKali.text()

@@ -1,15 +1,24 @@
 #pragma once
+
+// Definisi Frekuensi Nada (Oktaf 6 & 7 untuk volume buzzer maksimal)
+#define NOTE_C6  1047
 #define NOTE_D6  1175
+#define NOTE_E6  1319
 #define NOTE_F6  1397
 #define NOTE_FS6 1480
 #define NOTE_G6  1568
 #define NOTE_A6  1760
 #define NOTE_AS6 1865
+#define NOTE_B6  1976
 #define NOTE_C7  2093
 #define NOTE_D7  2349
 #define NOTE_DS7 2489
 
-// Melodi utama "He's a Pirate" (Oktaf tinggi agar suara maksimal)
+extern const int buzzer;
+
+// =========================================================================
+// LAGU 1: He's a Pirate (~12,15 detik)
+// =========================================================================
 const int melodi[] = {
   NOTE_D6, NOTE_F6,
   NOTE_G6, NOTE_G6, NOTE_G6, NOTE_A6,
@@ -32,7 +41,6 @@ const int melodi[] = {
   NOTE_A6, NOTE_FS6, NOTE_G6
 };
 
-// Durasi tiap nada dalam kelipatan ketukan (Total ~12,15 detik)
 const byte ketukan[] = {
   1, 1,
   2, 1, 1, 2,
@@ -57,10 +65,9 @@ const byte ketukan[] = {
 
 const int tempoDasar = 150; // ms per 1 ketukan
 const int jumlahNada = sizeof(melodi) / sizeof(melodi[0]);
-extern const int buzzer;
 
-void buzz(){
-int indeksNada = 0;
+void buzz() {
+  int indeksNada = 0;
   unsigned long waktuMulaiNada = millis();
   bool sedangBunyi = false;
 
@@ -80,13 +87,71 @@ int indeksNada = 0;
         sedangBunyi = false;
       }
     } else {
-      // Pindah ke nada berikutnya setelah durasi total tercapai
+      indeksNada++;
+      waktuMulaiNada = sekarang;
+      sedangBunyi = false;
+    }
+  }
+
+  noTone(buzzer);
+}
+
+// =========================================================================
+// LAGU 2: Leave Her, Johnny - Chorus (~12,0 detik)
+// =========================================================================
+const int melodiJohnny[] = {
+  // "Leave her, Johnny, leave her!"
+  NOTE_G6, NOTE_A6, NOTE_B6, NOTE_G6, NOTE_E6, NOTE_D6,
+  // "Oh, leave her, Johnny, leave her!"
+  NOTE_D6, NOTE_G6, NOTE_A6, NOTE_B6, NOTE_D7, NOTE_B6, NOTE_A6,
+  // "For the voyage is done and the winds don't blow,"
+  NOTE_B6, NOTE_C7, NOTE_D7, NOTE_B6, NOTE_G6, NOTE_A6, NOTE_B6, NOTE_G6, NOTE_E6, NOTE_D6,
+  // "And it's time for us to leave her."
+  NOTE_D6, NOTE_E6, NOTE_G6, NOTE_B6, NOTE_A6, NOTE_G6
+};
+
+// Total = 60 ketukan * 200 ms = 12.000 ms (12,0 detik)
+const byte ketukanJohnny[] = {
+  // "Leave her, John-ny, leave her!"
+  3, 1, 2, 2, 2, 4,
+  // "Oh, leave her, John-ny, leave her!"
+  2, 3, 1, 2, 2, 2, 4,
+  // "For the voy-age is done and the winds don't blow,"
+  1, 1, 2, 2, 2, 1, 1, 2, 2, 2,
+  // "And it's time for us to leave her."
+  1, 1, 2, 2, 2, 6
+};
+
+const int tempoDasarJohnny = 200; // ms per 1 ketukan
+const int jumlahNadaJohnny = sizeof(melodiJohnny) / sizeof(melodiJohnny[0]);
+
+void buzz1() {
+  int indeksNada = 0;
+  unsigned long waktuMulaiNada = millis();
+  bool sedangBunyi = false;
+
+  while (indeksNada < jumlahNadaJohnny) {
+    unsigned long sekarang = millis();
+    unsigned long durasiTotal = (unsigned long)ketukanJohnny[indeksNada] * tempoDasarJohnny;
+    unsigned long durasiBunyi = (durasiTotal * 85) / 100; // 85% bunyi, 15% jeda artikulasi
+
+    if (sekarang - waktuMulaiNada < durasiBunyi) {
+      if (!sedangBunyi) {
+        tone(buzzer, melodiJohnny[indeksNada]);
+        sedangBunyi = true;
+      }
+    } else if (sekarang - waktuMulaiNada < durasiTotal) {
+      if (sedangBunyi) {
+        noTone(buzzer);
+        sedangBunyi = false;
+      }
+    } else {
       indeksNada++;
       waktuMulaiNada = sekarang;
       sedangBunyi = false;
     }
 
-    // Anda bisa menambahkan pembacaan sensor atau kontrol LED di sini agar tetap berjalan paralel
+    // Tambahkan pembacaan sensor atau kontrol LED di sini jika diperlukan
   }
 
   noTone(buzzer);

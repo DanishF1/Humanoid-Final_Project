@@ -7,6 +7,7 @@
 #include "class.h"
 #include "espnow.h"
 #include "tone.h"
+#include "esp_random.h"
 
 long long timeSetup;
 long long timeLoop;
@@ -18,15 +19,15 @@ const int buzzer = 16;
 //servo-servo
 //SERVO KAKI KIRI
 const int KAKI_KIRI_YAW = 32;
-const int KAKI_KIRI_PITCH = 26;
-const int LUTUT_KIRI = 33;
-const int TELAPAK_KIRI = 25;
+const int KAKI_KIRI_PITCH = 33;
+const int LUTUT_KIRI = 25;
+const int TELAPAK_KIRI = 27;
 
 //SERVO KAKI KANAN
-const int KAKI_KANAN_YAW = 27;
-const int KAKI_KANAN_PITCH = 14;
-const int LUTUT_KANAN = 12;
-const int TELAPAK_KANAN = 13;
+const int KAKI_KANAN_YAW = 13;
+const int KAKI_KANAN_PITCH = 12;
+const int LUTUT_KANAN = 14;
+const int TELAPAK_KANAN = 26;
 
 //SERVO TANGAN KIRI
 const int TANGAN_KIRI_PITCH = 23;
@@ -90,8 +91,15 @@ void setup() {
    while (millis() - waktuMulai < 2000) {
 
   }
-  buzz();
+
+  /*int random = esp_random();
+  if(random % 2 == 0 || random == 0){
+    buzz1();
+  }else{
+    buzz();
+  }*/
   noTone(buzzer);
+  
 
   WiFi.mode(WIFI_STA);
 
@@ -191,7 +199,7 @@ void setup() {
   servoSikuKiri.write(0);           // 5
   servoKakiKananYaw.write(90);      // 6
   servoKakiKananPitch.write(90);    // 7
-  servoLututKanan.write(0);         // 8
+  servoLututKanan.write(180);         // 8
   servoTelapakKanan.write(90);      // 9
   servoKakiKiriYaw.write(90);       // 10
   servoKakiKiriPitch.write(90);     // 11

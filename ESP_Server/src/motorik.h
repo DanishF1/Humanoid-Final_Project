@@ -47,9 +47,9 @@ int interpolation(int sudutAwal, int sudutAkhir, int waktuBerjalan, int waktuTar
     }
 }
 
-void kakiKananMaju(){
-    if(LittleFS.exists("/majuKakiKanan.json")){
-        file = LittleFS.open("/majuKakiKanan.json");
+void test(){
+    if(LittleFS.exists("/test.json")){
+        file = LittleFS.open("/test.json");
     }
         while(file.available()){
         deserializeJson(doc, file);
@@ -99,6 +99,63 @@ void kakiKananMaju(){
 
         }
         }
+}
+void kakiKananMaju(){
+    if(LittleFS.exists("/majuKakiKanan.json")){
+        file = LittleFS.open("/majuKakiKanan.json");
+    }
+        while(file.available()){
+        deserializeJson(doc, file);
+        int total = doc["total"];
+        JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
+
+        for (int i=0; i<times.size();i++){
+            Serial.println("Sekarang frame ke- ");
+            Serial.print(i);
+            int tesSudut;
+            int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
+            int sudutAwal[14] = {
+            servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
+            servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
+            servoKakiKananYaw.read(),     servoKakiKananPitch.read(),   servoLututKanan.read(), servoTelapakKanan.read(),
+            servoKakiKiriYaw.read(),      servoKakiKiriPitch.read(),    servoLututKiri.read(),  servoTelapakKiri.read()
+            };
+            while(true){
+            unsigned long timeBerjalan = millis() - timeNows;
+            
+            // Tangan Kanan
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
+
+            // Tangan Kiri
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
+
+            // Kaki Kanan
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
+
+            // Kaki Kiri
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
+
+            delay(15);
+            if(timeBerjalan >= durasiFrame) break;
+        }
+
+        }
+        }
 
         
 }
@@ -116,7 +173,11 @@ if(LittleFS.exists("/majuKakiKiri.json")){
         for (int i=0; i<times.size();i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
-            unsigned long timeNows = millis();
+            int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
             int sudutAwal[14] = {
             servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
             servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
@@ -127,27 +188,26 @@ if(LittleFS.exists("/majuKakiKiri.json")){
             unsigned long timeBerjalan = millis() - timeNows;
             
             // Tangan Kanan
-            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, times[i]));
-            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, times[i]));
-            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, times[i]));
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
 
             // Tangan Kiri
-            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, times[i]));
-            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, times[i]));
-            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, times[i]));
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
 
             // Kaki Kanan
-            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, times[i])); 
-            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, times[i]));
-            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, times[i]));
-            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, times[i]));
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
 
             // Kaki Kiri
-            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, times[i]));
-            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, times[i]));
-            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, times[i]));
-            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, times[i]));
-
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
             delay(15);
             if(timeBerjalan >= times[i]) break;
         }
@@ -170,7 +230,11 @@ void kakiKananMundur(){
             for (int i=0; i<timeSize;i++){
                 Serial.println("Sekarang frame ke- ");
                 Serial.print(i);
-                unsigned long timeNows = millis();
+                int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
                 int sudutAwal[14] = {
                 servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
                 servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
@@ -180,27 +244,27 @@ void kakiKananMundur(){
                 while(true){
                 unsigned long timeBerjalan = millis() - timeNows;
                 
-                // Tangan Kanan
-                servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, times[i]));
-                servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, times[i]));
-                servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, times[i]));
+            // Tangan Kanan
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
 
-                // Tangan Kiri
-                servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, times[i]));
-                servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, times[i]));
-                servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, times[i]));
+            // Tangan Kiri
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
 
-                // Kaki Kanan
-                servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, times[i])); 
-                servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, times[i]));
-                servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, times[i]));
-                servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, times[i]));
+            // Kaki Kanan
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
 
-                // Kaki Kiri
-                servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, times[i]));
-                servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, times[i]));
-                servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, times[i]));
-                servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, times[i]));
+            // Kaki Kiri
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
 
                 delay(15);
                 if(timeBerjalan >= times[i]) break;
@@ -224,7 +288,11 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
         for (int i=0; i<timeSize;i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
-            unsigned long timeNows = millis();
+            int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
             int sudutAwal[14] = {
             servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
             servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
@@ -235,26 +303,26 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
             unsigned long timeBerjalan = millis() - timeNows;
             
             // Tangan Kanan
-            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, times[i]));
-            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, times[i]));
-            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, times[i]));
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
 
             // Tangan Kiri
-            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, times[i]));
-            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, times[i]));
-            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, times[i]));
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
 
             // Kaki Kanan
-            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, times[i])); 
-            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, times[i]));
-            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, times[i]));
-            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, times[i]));
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
 
             // Kaki Kiri
-            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, times[i]));
-            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, times[i]));
-            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, times[i]));
-            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, times[i]));
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
 
             delay(15);
             if(timeBerjalan >= times[i]) break;
@@ -278,7 +346,11 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
         for (int i=0; i<timeSize;i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
-            unsigned long timeNows = millis();
+            int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
             int sudutAwal[14] = {
             servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
             servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
@@ -289,26 +361,26 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
             unsigned long timeBerjalan = millis() - timeNows;
             
             // Tangan Kanan
-            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, times[i]));
-            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, times[i]));
-            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, times[i]));
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
 
             // Tangan Kiri
-            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, times[i]));
-            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, times[i]));
-            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, times[i]));
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
 
             // Kaki Kanan
-            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, times[i])); 
-            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, times[i]));
-            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, times[i]));
-            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, times[i]));
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
 
             // Kaki Kiri
-            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, times[i]));
-            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, times[i]));
-            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, times[i]));
-            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, times[i]));
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
 
             delay(15);
             if(timeBerjalan >= times[i]) break;
@@ -332,7 +404,11 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
         for (int i=0; i<timeSize;i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
-            unsigned long timeNows = millis();
+            int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
             int sudutAwal[14] = {
             servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
             servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
@@ -343,26 +419,26 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
             unsigned long timeBerjalan = millis() - timeNows;
             
             // Tangan Kanan
-            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, times[i]));
-            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, times[i]));
-            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, times[i]));
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
 
             // Tangan Kiri
-            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, times[i]));
-            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, times[i]));
-            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, times[i]));
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
 
             // Kaki Kanan
-            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, times[i])); 
-            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, times[i]));
-            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, times[i]));
-            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, times[i]));
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
 
             // Kaki Kiri
-            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, times[i]));
-            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, times[i]));
-            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, times[i]));
-            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, times[i]));
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
 
             delay(15);
             if(timeBerjalan >= times[i]) break;

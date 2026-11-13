@@ -29,16 +29,18 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   sendToBridge s;
   motorik m;
   boxing b;
+  rawMotorik rm;
   payloadEN = dataTerima.pesan;
   memset(&dataTerima, 0, sizeof(dataTerima));                                      
   memcpy(&dataTerima, incomingData, min(len, (int)sizeof(dataTerima.pesan) - 1));    
-
+  tone(buzzer, 4000);
   String pesan = dataTerima.pesan;
   if(pesan.length() < 2) return;    
   String header = pesan.substring(0, 2);
   String leng;
   int lengInt;
   unsigned long timeNow = millis();
+  noTone(buzzer);
   if(header == "FF"){
   if(pesan.length() == 5){
     char cmd;
@@ -61,8 +63,16 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
       break;
       case 'f':
       b.fm(lengInt);
+      break;
       case 'b':
       b.bc(lengInt);
+      break;
+      case 'R':
+      ESP.restart();
+      break;
+      case 'z':
+      rm.test();
+      break;
       default:
        break;
     }
