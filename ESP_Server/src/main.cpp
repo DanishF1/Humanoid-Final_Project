@@ -30,13 +30,13 @@ const int LUTUT_KANAN = 14;
 const int TELAPAK_KANAN = 26;
 
 //SERVO TANGAN KIRI
-const int TANGAN_KIRI_PITCH = 22;
-const int TANGAN_KIRI_ROLL = 23;
+const int TANGAN_KIRI_PITCH = 23;
+const int TANGAN_KIRI_ROLL = 22;
 const int SIKU_KIRI = 21;
 
 //SERVO TANGAN KANAN
-const int TANGAN_KANAN_PITCH = 18;
-const int TANGAN_KANAN_ROLL = 17;
+const int TANGAN_KANAN_PITCH = 17;
+const int TANGAN_KANAN_ROLL = 18;
 const int SIKU_KANAN = 19;
 
 // Kaki Kiri
@@ -194,9 +194,9 @@ void setup() {
     servoTanganKananRoll.write(0);    // 0
   servoTanganKananPitch.write(90);  // 1
   servoSikuKanan.write(0);          // 2
-  servoTanganKiriRoll.write(0);     // 3
+  servoTanganKiriRoll.write(180);     // 3
   servoTanganKiriPitch.write(90);   // 4
-  servoSikuKiri.write(0);           // 5
+  servoSikuKiri.write(180);           // 5
   servoKakiKananYaw.write(90);      // 6
   servoKakiKananPitch.write(90);    // 7
   servoLututKanan.write(180);         // 8

@@ -222,12 +222,10 @@ void kakiKananMundur(){
         }
             while(file.available()){
             deserializeJson(doc, file);
-            int total = doc["total"];
-            int times[total] = {doc["times"]};
-            int frames[total][14] = {doc["frames"]}; 
-            int timeSize = sizeof(times)/sizeof(times[0]);
+            JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
 
-            for (int i=0; i<timeSize;i++){
+        for (int i=0; i<times.size();i++){
                 Serial.println("Sekarang frame ke- ");
                 Serial.print(i);
                 int t1  =times[i-1];
@@ -280,12 +278,10 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
     }
         while(file.available()){
         deserializeJson(doc, file);
-        int total = doc["total"];
-        int times[total] = {doc["times"]};
-        int frames[total][14] = {doc["frames"]}; 
-        int timeSize = sizeof(times)/sizeof(times[0]);
+        JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
 
-        for (int i=0; i<timeSize;i++){
+        for (int i=0; i<times.size();i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
             int t1  =times[i-1];
@@ -338,12 +334,10 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
     }
         while(file.available()){
         deserializeJson(doc, file);
-        int total = doc["total"];
-        int times[total] = {doc["times"]};
-        int frames[total][14] = {doc["frames"]}; 
-        int timeSize = sizeof(times)/sizeof(times[0]);
+        JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
 
-        for (int i=0; i<timeSize;i++){
+        for (int i=0; i<times.size();i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
             int t1  =times[i-1];
@@ -396,12 +390,10 @@ if(LittleFS.exists("/mundurKakiKiri.json")){
     }
         while(file.available()){
         deserializeJson(doc, file);
-        int total = doc["total"];
-        int times[total] = {doc["times"]};
-        int frames[total][14] = {doc["frames"]}; 
-        int timeSize = sizeof(times)/sizeof(times[0]);
+        JsonArray times  = doc["times"];
+        JsonArray frames = doc["frames"];
 
-        for (int i=0; i<timeSize;i++){
+        for (int i=0; i<times.size();i++){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
             int t1  =times[i-1];
