@@ -66,6 +66,69 @@ const byte ketukan[] = {
 const int tempoDasar = 150; // ms per 1 ketukan
 const int jumlahNada = sizeof(melodi) / sizeof(melodi[0]);
 
+// =========================================================================
+// LAGU 3: Rocky 3 - Eye of the Tiger (~7,5 detik)
+// =========================================================================
+const int melodiRocky3[] = {
+  // Riff utama bagian 1
+  NOTE_G6, NOTE_G6, NOTE_AS6, NOTE_C7,
+  NOTE_G6, NOTE_G6, NOTE_F6,  NOTE_G6,
+  NOTE_G6, NOTE_G6, NOTE_AS6, NOTE_C7,
+  NOTE_D7, NOTE_DS7, NOTE_D7, NOTE_C7,
+  
+  // Riff utama bagian 2 (Resolusi)
+  NOTE_G6, NOTE_G6, NOTE_AS6, NOTE_C7,
+  NOTE_G6, NOTE_G6, NOTE_F6,  NOTE_G6,
+  NOTE_AS6, NOTE_C7, NOTE_D7, NOTE_DS7, NOTE_D7, NOTE_C7, NOTE_AS6, NOTE_G6
+};
+
+// Total = 52 ketukan * 145 ms = 7.540 ms (~7,5 detik)
+const byte ketukanRocky3[] = {
+  // Riff 1
+  1, 1, 1, 3,
+  1, 1, 1, 3,
+  1, 1, 1, 3,
+  2, 2, 2, 4,
+  
+  // Riff 2
+  1, 1, 1, 3,
+  1, 1, 1, 3,
+  1, 1, 1, 1, 1, 1, 2, 4
+};
+
+const int tempoDasarRocky3 = 145; // ms per 1 ketukan
+const int jumlahNadaRocky3 = sizeof(melodiRocky3) / sizeof(melodiRocky3[0]);
+
+void buzz2() {
+  int indeksNada = 0;
+  unsigned long waktuMulaiNada = millis();
+  bool sedangBunyi = false;
+
+  while (indeksNada < jumlahNadaRocky3) {
+    unsigned long sekarang = millis();
+    unsigned long durasiTotal = (unsigned long)ketukanRocky3[indeksNada] * tempoDasarRocky3;
+    unsigned long durasiBunyi = (durasiTotal * 85) / 100; // 85% bunyi, 15% jeda antar nada
+
+    if (sekarang - waktuMulaiNada < durasiBunyi) {
+      if (!sedangBunyi) {
+        tone(buzzer, melodiRocky3[indeksNada]);
+        sedangBunyi = true;
+      }
+    } else if (sekarang - waktuMulaiNada < durasiTotal) {
+      if (sedangBunyi) {
+        noTone(buzzer);
+        sedangBunyi = false;
+      }
+    } else {
+      indeksNada++;
+      waktuMulaiNada = sekarang;
+      sedangBunyi = false;
+    }
+  }
+
+  noTone(buzzer);
+}
+
 void buzz() {
   int indeksNada = 0;
   unsigned long waktuMulaiNada = millis();

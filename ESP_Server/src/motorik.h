@@ -1,5 +1,6 @@
 #pragma once
 #include"LittleFS.h"
+#include "tone.h"
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
@@ -20,7 +21,8 @@ extern Servo servoSikuKiri;
 extern Servo servoTanganKananPitch;
 extern Servo servoTanganKananRoll;
 extern Servo servoSikuKanan;
-
+int period = 1000;
+unsigned long time_now = 0;
 enum state{
 IDLE, 
 MAJU,
@@ -47,9 +49,9 @@ int interpolation(int sudutAwal, int sudutAkhir, int waktuBerjalan, int waktuTar
     }
 }
 
-void test(){
-    if(LittleFS.exists("/test.json")){
-        file = LittleFS.open("/test.json");
+void stance(){
+    if(LittleFS.exists("/stance.json")){
+        file = LittleFS.open("/stance.json");
     }
         while(file.available()){
         deserializeJson(doc, file);
@@ -61,7 +63,11 @@ void test(){
             Serial.println("Sekarang frame ke- ");
             Serial.print(i);
             int tesSudut;
-            unsigned long timeNows = millis();
+            int t1  =times[i-1];
+            int t2 = times [i];
+                int durasiFrame = (i == 0) ? times[0] : (t2-t1);
+    
+                 unsigned long timeNows = millis();
             int sudutAwal[14] = {
             servoTanganKananRoll.read(),  servoTanganKananPitch.read(), servoSikuKanan.read(),
             servoTanganKiriRoll.read(),   servoTanganKiriPitch.read(),  servoSikuKiri.read(),
@@ -72,29 +78,29 @@ void test(){
             unsigned long timeBerjalan = millis() - timeNows;
             
             // Tangan Kanan
-            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, times[i]));
-            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, times[i]));
-            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, times[i]));
+            servoTanganKananRoll.write(interpolation(sudutAwal[0], frames[i][0], timeBerjalan, durasiFrame));
+            servoTanganKananPitch.write(interpolation(sudutAwal[1], frames[i][1], timeBerjalan, durasiFrame));
+            servoSikuKanan.write(interpolation(sudutAwal[2], frames[i][2], timeBerjalan, durasiFrame));
 
             // Tangan Kiri
-            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, times[i]));
-            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, times[i]));
-            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, times[i]));
+            servoTanganKiriRoll.write(interpolation(sudutAwal[3], frames[i][3], timeBerjalan, durasiFrame));
+            servoTanganKiriPitch.write(interpolation(sudutAwal[4], frames[i][4], timeBerjalan, durasiFrame));
+            servoSikuKiri.write(interpolation(sudutAwal[5], frames[i][5], timeBerjalan, durasiFrame));
 
             // Kaki Kanan
-            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, times[i])); 
-            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, times[i]));
-            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, times[i]));
-            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, times[i]));
+            servoKakiKananYaw.write(interpolation(sudutAwal[6], frames[i][6], timeBerjalan, durasiFrame)); 
+            servoKakiKananPitch.write(interpolation(sudutAwal[7], frames[i][7], timeBerjalan, durasiFrame));
+            servoLututKanan.write(interpolation(sudutAwal[8], frames[i][8], timeBerjalan, durasiFrame));
+            servoTelapakKanan.write(interpolation(sudutAwal[9], frames[i][9], timeBerjalan, durasiFrame));
 
             // Kaki Kiri
-            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, times[i]));
-            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, times[i]));
-            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, times[i]));
-            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, times[i]));
+            servoKakiKiriYaw.write(interpolation(sudutAwal[10], frames[i][10], timeBerjalan, durasiFrame));
+            servoKakiKiriPitch.write(interpolation(sudutAwal[11], frames[i][11], timeBerjalan, durasiFrame));
+            servoLututKiri.write(interpolation(sudutAwal[12], frames[i][12], timeBerjalan, durasiFrame));
+            servoTelapakKiri.write(interpolation(sudutAwal[13], frames[i][13], timeBerjalan, durasiFrame));
 
             delay(15);
-            if(timeBerjalan >= times[i]) break;
+            if(timeBerjalan >= durasiFrame) break;
         }
 
         }
@@ -520,6 +526,14 @@ rawMotorik rm;
         for(int i = 0;i<timex;i++){
             rm.flexMuscle();
         }
+        currentState = IDLE;
+    }
+
+    void stance(){
+      if(currentState != IDLE) return;
+        currentState = SPECIAL;
+        buzz();
+        rm.stance();
         currentState = IDLE;
     }
 };

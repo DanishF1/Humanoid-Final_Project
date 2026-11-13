@@ -71,7 +71,7 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
       ESP.restart();
       break;
       case 'z':
-      rm.test();
+      rm.stance();
       break;
       default:
        break;

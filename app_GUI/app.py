@@ -192,7 +192,7 @@ class appGUI(QWidget):
         self.balik = QPushButton("Kembali")
         self.balik.clicked.connect(self.balikKeUser)
         
-        self.test = QPushButton("Test")
+        self.test = QPushButton("Stance")
         self.test.clicked.connect(self.sendTest)
             
         self.master.addWidget(self.text)
@@ -344,7 +344,7 @@ class appGUI(QWidget):
         self.serialComs(payload)
         
     def sendTest(self):
-        self.lockButtons(6000)
+        self.lockButtons(4000)
         msg = self.berapaKali.text()
         try:
             msgI = int(msg)
